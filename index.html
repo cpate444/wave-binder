@@ -683,7 +683,7 @@ function vCash(){
   var groups = [];
   c.rev.forEach(function(r, i){ var g = groups.filter(function(x){return x.name===r[0];})[0]; if(!g){ g = {name:r[0], idx:[]}; groups.push(g); } g.idx.push(i); });
   groups.forEach(function(g){
-    sect('Revenue: ' + g.name);
+    sect('Revenue: ' + g.name + (g.name === 'Memberships' && c.ordersAsOf ? ' \u00b7 actual Squarespace sign-ups through ' + c.ordersAsOf + ' (annual plans shown per month)' : ''));
     g.idx.forEach(function(i){ var r = c.rev[i];
       line(nameCell(c.rev, i, 1, 'revenue line'), [h('td',{class:'n'}, numInput(function(){return r[2];}, function(v){r[2]=v;}, {w:'w-s',label:r[1]+' price'})), h('td',{class:'n'}, numInput(function(){return volOf(r);}, function(v){setVol(r,v);}, {w:'w-s',label:r[1]+' monthly volume'}))], function(m){return m.rev[i];});
     });
@@ -1191,7 +1191,34 @@ function migrate6(st){
   st.v = 6;
   return st;
 }
-var _m2 = migrate; migrate = function(st){ return migrate6(migrate5(migrate4(migrate3(_m2(st))))); };
+function migrate7(st){
+  if(!st || !st.org || (st.v||1) >= 7) return st;
+  var ACTUAL = [["Memberships", "Founding – Monthly ($199/mo)", 199, 733], ["Memberships", "Pre-Sale / Charter – Monthly ($199/mo)", 199, 183], ["Memberships", "Pre-Sale – Monthly ($299/mo)", 299, 37], ["Memberships", "General – Monthly ($229/mo)", 229, 38], ["Memberships", "Founding – Annual ($2,100/yr, per month)", 175, 259], ["Memberships", "Pre-Sale / Charter – Annual ($2,100/yr, per month)", 175, 116], ["Memberships", "Pre-Sale – Annual ($3,300/yr, per month)", 275, 16], ["Memberships", "General – Annual ($2,399/yr, per month)", 199.92, 9], ["Memberships", "New members still to sell (General, $229/mo)", 229, 0]];
+  var rev = st.cash.rev, at = -1, oldScen = [0,0,0,0];
+  rev.forEach(function(r, i){ if(r[0] === 'Memberships'){ if(at < 0) at = i; (Array.isArray(r[4]) ? r[4] : [0,0,0,0]).forEach(function(v,k){ oldScen[k] += num(v); }); } });
+  st.cash.rev = rev.filter(function(r){ return r[0] !== 'Memberships'; });
+  if(at < 0) at = 0;
+  var sold = ACTUAL.reduce(function(a,r){ return a + r[3]; }, 0) || 1;
+  var add = ACTUAL.map(function(r){ return [r[0], r[1], r[2], r[3], oldScen.map(function(t){ return Math.round(t * r[3] / sold); })]; });
+  Array.prototype.splice.apply(st.cash.rev, [Math.min(at, st.cash.rev.length), 0].concat(add));
+  st.cash.ordersAsOf = 'Nov 22, 2026';
+  st.v = 7;
+  return st;
+}
+function migrate8(st){
+  if(!st || !st.org || (st.v||1) >= 8) return st;
+  var COUNTS = {"Founding – Annual ($2,100/yr, per month)": 259, "Founding – Monthly ($199/mo)": 733, "General – Annual ($2,399/yr, per month)": 9, "General – Monthly ($229/mo)": 38, "Pre-Sale / Charter – Annual ($2,100/yr, per month)": 116, "Pre-Sale / Charter – Monthly ($199/mo)": 183, "Pre-Sale – Annual ($3,300/yr, per month)": 16, "Pre-Sale – Monthly ($299/mo)": 37};
+  st.cash.rev.forEach(function(r){ if(r[0] === 'Memberships' && COUNTS.hasOwnProperty(r[1])) r[3] = COUNTS[r[1]]; });
+  st.v = 8;
+  return st;
+}
+function migrate9(st){
+  if(!st || !st.org || (st.v||1) >= 9) return st;
+  st.cash.rev.forEach(function(r){ if(r[0] === 'Memberships' && r[1] === 'Founding \u2013 Monthly ($199/mo)') r[3] = 732; });
+  st.v = 9;
+  return st;
+}
+var _m2 = migrate; migrate = function(st){ return migrate9(migrate8(migrate7(migrate6(migrate5(migrate4(migrate3(_m2(st)))))))); };
 S = migrate(S);
 
 /* ---------- boot ---------- */
