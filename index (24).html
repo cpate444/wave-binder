@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wave Wellness Ops Binder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style id="css">
+:root{
+  /* Layout: sticky header + scrolling tab strip, one working panel per binder section */
+  --bg:#f4f7f7; --surface:#ffffff; --ink:#10282e; --muted:#5b7076; --line:#dbe4e5;
+  --accent:#0d7c86; --accent-soft:#dff1f1; --wave:#0b3c49; --good:#2f8a4e; --warn:#b7791f; --bad:#b4423a;
+  --display:"Fraunces", Georgia, serif; --body:"Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b1a1e; --surface:#11252b; --ink:#e4f0f1; --muted:#93a9ae; --line:#23404a;
+    --accent:#4cc3c9; --accent-soft:#16383e; --wave:#08151a; --good:#5fc27f; --warn:#e0a84a; --bad:#e2766c;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b1a1e; --surface:#11252b; --ink:#e4f0f1; --muted:#93a9ae; --line:#23404a;
+  --accent:#4cc3c9; --accent-soft:#16383e; --wave:#08151a; --good:#5fc27f; --warn:#e0a84a; --bad:#e2766c;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--display);font-weight:650;text-wrap:balance;margin:0;letter-spacing:-.01em}
+h2{font-size:1.5rem}
+h3{font-size:1.1rem}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num,td.n,th.n{font-variant-numeric:tabular-nums}
+
+header.top{background:var(--wave);color:#e8f6f6;position:sticky;top:0;z-index:20}
+.top-inner{max-width:1200px;margin:0 auto;padding:14px 16px 0;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand h1{font-size:1.35rem;color:#fff}
+.brand p{margin:2px 0 0;font-size:.8rem;color:#9fc9cc}
+.save-state{font-size:.78rem;color:#9fc9cc;padding-bottom:4px}
+nav.tabs{max-width:1200px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;padding:10px 16px 0;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs a{flex:0 0 auto;color:#b9dcde;text-decoration:none;font-size:.88rem;font-weight:600;padding:8px 12px;border-radius:8px 8px 0 0}
+nav.tabs a[aria-current="page"]{background:var(--bg);color:var(--ink)}
+main > *{min-width:0}
+main{max-width:1200px;margin:0 auto;padding:20px 16px 120px;display:grid;gap:18px}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.section-head p{margin:4px 0 0;color:var(--muted);max-width:65ch;font-size:.9rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.card > h3{margin-bottom:10px}
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
+.tile .label{font-size:.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.tile .value{font-family:var(--display);font-size:1.6rem;margin-top:4px;font-variant-numeric:tabular-nums}
+.tile .sub{font-size:.8rem;color:var(--muted)}
+.tile.go{border-left:4px solid var(--accent);cursor:pointer}
+
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle;white-space:nowrap}
+th{font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700;background:var(--surface);position:sticky;top:0}
+td.n,th.n{text-align:right}
+tr.sect td{background:var(--accent-soft);font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+tr.total td{font-weight:700;border-top:2px solid var(--ink)}
+tr.hi td{background:var(--accent-soft);font-weight:700}
+table.inc td.fy,table.inc th.fy{background:var(--accent-soft);font-weight:700}
+tr.pctrow td{color:var(--muted);font-size:.8rem;font-style:italic;border-bottom:1px solid var(--line)}
+td.pct{color:var(--muted)}
+.tile .value.neg{color:var(--bad)}
+tr.unpaid td{color:var(--muted)}
+.dept li .pill{flex:0 0 auto}
+tr.sect td.n{font-size:.8rem}
+tr.subtot td{font-weight:700;font-style:normal;border-top:1px solid var(--muted)}
+td.neg{color:var(--bad)}
+.stick-col{position:sticky;left:0;background:var(--surface);z-index:1}
+
+input.cell{width:100%;min-width:60px;border:1px solid transparent;background:transparent;border-radius:6px;padding:4px 6px}
+input.cell:hover{border-color:var(--line)}
+input.cell:focus{border-color:var(--accent);background:var(--surface);outline:none}
+input.cell.n{text-align:right;font-variant-numeric:tabular-nums}
+input.cell.edit{color:var(--accent);font-weight:600}
+.w-s{width:70px}.w-m{width:100px}.w-l{width:200px}
+td > input.cell[type=text]{width:auto;min-width:0}
+
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 12px;font-weight:600;font-size:.85rem;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.ghost{background:transparent}
+.btn.small{padding:4px 9px;font-size:.78rem}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:.85rem;font-weight:600;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+.pill{display:inline-block;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.pill.warn{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.pill.bad{background:color-mix(in srgb,var(--bad) 16%,transparent);color:var(--bad)}
+.pill.good{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good)}
+.note{font-size:.82rem;color:var(--muted);margin:8px 0 0;max-width:70ch}
+.flag{border-left:3px solid var(--warn);padding:8px 12px;background:color-mix(in srgb,var(--warn) 8%,var(--surface));border-radius:0 8px 8px 0;font-size:.85rem}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+label.inline{display:flex;gap:8px;align-items:center;font-size:.88rem;font-weight:600}
+label.inline input[type=number],label.inline input[type=text]{width:110px;border:1px solid var(--line);border-radius:6px;padding:5px 8px;background:var(--surface)}
+
+/* schedule grid */
+.sched td,.sched th{padding:0;border:1px solid var(--line);text-align:center}
+.sched th{padding:6px 4px;min-width:74px;white-space:normal;line-height:1.15}
+.sched th input{width:auto;min-width:72px;border:0;background:transparent;text-align:center;font-weight:700;font-size:.72rem;text-transform:uppercase;color:var(--muted)}
+.sched td.time{padding:4px 8px;font-size:.78rem;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums;background:var(--surface)}
+.slot{width:100%;height:26px;border:0;background:transparent;cursor:pointer;display:block}
+.slot[aria-pressed="true"]{background:var(--accent)}
+.slot:hover{outline:1px solid var(--accent);outline-offset:-1px}
+.sched td.duty{font-size:.78rem;font-weight:700;padding:0 6px}
+.sched tr.foot td{font-weight:700;font-size:.8rem;padding:6px 4px;background:var(--accent-soft)}
+
+/* org chart */
+.org-ceo{display:flex;justify-content:center}
+.person{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 10px 8px;text-align:center;display:grid;gap:2px;align-content:start}
+.person .role-input{border:1px solid transparent;border-radius:6px;background:transparent;text-align:center;font:inherit;font-size:.74rem;line-height:1.25;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700;width:100%;resize:none;overflow:hidden;padding:2px}
+.person .role-input:hover,.person input:hover{border-color:var(--line)}
+.person .role-input:focus,.person input:focus{border-color:var(--accent);outline:none}
+.person input{border:1px solid transparent;border-radius:6px;background:transparent;text-align:center;font-weight:700;font-size:1rem;width:100%;padding:2px}
+.person .remove{position:absolute;top:2px;right:2px;font-size:.95rem;opacity:.5}
+.person.ceo{border:2px solid var(--accent);width:min(260px,100%)}
+.lead-head{text-align:center;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 10px;font-family:var(--body)}
+.execs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.dept .lead{display:grid;gap:2px}
+.dept .lead span{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em}
+.dept .lead input{font-weight:600;color:var(--ink);padding:3px 4px}
+.connector{height:18px;width:2px;background:var(--line);margin:0 auto}
+.depts{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.dept{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:10px;padding:12px}
+.dept h3{font-size:1rem}
+.dept .lead{font-size:.8rem;color:var(--muted);margin-bottom:8px}
+.dept ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.dept li{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:.88rem}
+.dept li input{width:52px;text-align:right}
+.dept .sum{margin-top:8px;padding-top:6px;border-top:1px solid var(--line);font-size:.8rem;font-weight:700;display:flex;justify-content:space-between}
+
+/* bars */
+.bars{display:grid;gap:8px}
+.bar-row{display:grid;grid-template-columns:110px 1fr 110px;gap:8px;align-items:center;font-size:.85rem}
+.bar-track{height:14px;background:var(--accent-soft);border-radius:7px;overflow:hidden}
+.bar-fill{height:100%;background:var(--accent);border-radius:7px}
+.bar-row.on span:first-child{font-weight:700;color:var(--accent)}
+.tile.active{border:2px solid var(--accent)}
+.scen-pick{display:grid;gap:8px}
+.scen-label{font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
+table.scen td.act,table.scen th.act{background:var(--accent-soft)}
+table.scen th.grp{text-align:center;border-bottom:1px solid var(--line)}
+table.scen th input.cell{font-size:.75rem;font-weight:700;text-transform:uppercase;color:var(--muted)}
+.bar-row .n{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+svg text{fill:var(--muted);font-family:var(--body);font-size:11px}
+
+/* save bar */
+.top-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;padding-bottom:4px}
+.gh-btn{background:transparent;color:#e8f6f6;border-color:#3c6b75}
+.banner{display:none;max-width:1200px;margin:12px 16px 0;padding:10px 14px;border-radius:10px;background:color-mix(in srgb,var(--warn) 14%,var(--surface));border:1px solid color-mix(in srgb,var(--warn) 40%,transparent);font-size:.88rem;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap}
+.banner.show{display:flex}
+@media (min-width:1232px){.banner{margin-left:auto;margin-right:auto}}
+.modal{position:fixed;inset:0;z-index:50;background:rgba(5,20,24,.55);display:grid;place-items:center;padding:16px}
+.modal-card{background:var(--surface);color:var(--ink);border-radius:14px;padding:18px;max-width:440px;width:100%;display:grid;gap:8px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.modal-card input{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--bg);font:inherit;width:100%}
+.savebar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--ink);color:var(--bg);padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:none}
+.savebar.show{display:block}
+.savebar-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.savebar .btn{background:transparent;color:var(--bg);border-color:color-mix(in srgb,var(--bg) 40%,transparent)}
+.savebar .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.class-room{display:grid;gap:6px}
+.classrow{display:grid;grid-template-columns:76px 1fr;gap:4px 8px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}
+.classrow .ct{grid-row:span 2;display:grid;font-size:.8rem;font-variant-numeric:tabular-nums}
+.classrow .ct span{color:var(--muted);font-size:.72rem}
+.classrow select.cell{border:1px solid var(--line);border-radius:6px;padding:4px 6px;background:var(--surface);min-width:0}
+.classrow input.cell{border-color:var(--line);min-width:0}
+.classrow.late .ct strong{color:var(--bad)}
+.studio-set{display:grid;grid-template-columns:1fr 1fr 70px;gap:6px;margin:8px 0}
+.studio-set label{display:grid;gap:2px;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+.studio-set input{border:1px solid var(--line)!important;font-size:.88rem;text-transform:none;letter-spacing:0;color:var(--ink);min-width:0}
+table.glance td{white-space:normal;min-width:110px;vertical-align:top}
+.gl-time{font-weight:700;font-size:.82rem;font-variant-numeric:tabular-nums}
+.gl-type{font-size:.78rem;color:var(--accent);font-weight:600}
+.gl-sub{font-size:.68rem;text-transform:none;letter-spacing:0;font-weight:500}
+.gl-empty{color:var(--muted)}
+.class-room .slotrow{display:grid;grid-template-columns:110px 1fr 32px;gap:6px;align-items:center}
+.class-room input{border:1px solid var(--line);border-radius:6px;padding:5px 8px;background:var(--surface);width:100%}
+.rm{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--bad);font-size:.75rem;font-weight:700;cursor:pointer;display:inline-grid;place-items:center;padding:0}
+.rm:hover,.rm:focus-visible{background:var(--bad);color:#fff;border-color:var(--bad)}
+.namecell{display:flex;align-items:center;gap:6px}
+.namecell input.cell{width:auto}
+.dept li .namecell{flex:1;min-width:0}
+.dept li .namecell input{width:100%;text-align:left}
+.dept-top{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.dept-top input{font-family:var(--display);font-weight:650;font-size:1rem}
+tr.addrow td{border-bottom:1px solid var(--line);padding:4px 8px}
+.savebar span .btn{margin-left:8px;color:var(--bg)}
+.iconbtn{border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:1.1rem;line-height:1;padding:4px}
+.iconbtn:hover{color:var(--bad)}
+@media (max-width:700px){ td.stick-col,th.stick-col{position:static} }
+@media (max-width:520px){
+  .bar-row{grid-template-columns:90px 1fr 90px}
+  h2{font-size:1.3rem}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="application/json" id="gh-config">{"repo":"wave-binder-data","branch":"main","path":"data.json"}</script>
+<script type="application/json" id="state">{"v":1}</script>
+<script id="app">
+(function(){
+'use strict';
+var HEAD = '<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>Wave Wellness Ops Binder</title>\n<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">\n';
+var LSKEY = 'wave-ops-binder-device-save'; try{ localStorage.removeItem('wave-ops-binder-draft'); }catch(e){}
+var savedSnap = null;
+function markSaved(){ savedSnap = JSON.stringify(S); }
+
+/* ---------- default data (transcribed from the binder) ---------- */
+function rng(a,b){var o=[];for(var i=a;i<=b;i++)o.push(i);return o;}
+var TIMES=[];(function(){for(var m=270;m<=1260;m+=30){var h=Math.floor(m/60),mm=m%60;TIMES.push(((h%12)||12)+':'+(mm<10?'0':'')+mm+' '+(h<12?'AM':'PM'));}})();
+function grid(cols, on){
+  return {cols:cols, on:TIMES.map(function(_,i){return cols.map(function(_,c){var r=on[c]||[];return r.some(function(p){return i>=p[0]&&i<=p[1];});});})};
+}
+function DEFAULTS(){
+  return {
+  v:4, savedAt:null, inc:{dep:0, tax:0},
+  org:{ceoTitle:'Chief Executive Officer', ceo:'Andy',
+    execs:[['Medical Director','New hire (TBD)'],['Chief Operating Officer','Whit'],['Director of Operations','Cooper'],['Chief Product Officer','Ted'],['Chief Growth Officer','Ty'],['Director of Member Experience','Emily']],
+    depts:[
+      {name:'1st Impressions',lead:'Director of 1st Impressions',staff:[['Receptionist',8]]},
+      {name:'Pilates / Yoga',lead:'Director of Pilates & Yoga',staff:[['Pilates / Yoga Instructor',7]]},
+      {name:'Performance',lead:'Director of Performance',staff:[['Trainer',8],['Trainer / Intern',4]]},
+      {name:'Maintenance',lead:'Director of Maintenance',staff:[['Maintenance Assistant',2]]},
+      {name:'Longevity / Recovery',lead:'Director of Longevity & Recovery',staff:[['Longevity & Recovery Assistant',1]]},
+      {name:'MedSpa',lead:'Director of MedSpa',staff:[['Injector',6],['Facials & Laser Specialist',6]]},
+      {name:'Salon Services',lead:'Director of Salon Services',staff:[['Hair Stylist',15],['Nail Technician',15],['Massage Therapist',4]]},
+      {name:'Cafe',lead:'Director of Cafe',staff:[['Barista',10],['Cook',6]]},
+      {name:'Events',lead:'Event Coordinator',staff:[['Event Assistant',1]]},
+      {name:'Day Care',lead:'Director of Day Care',staff:[['Kid Care Assistant',8]]}
+    ]},
+  payroll:{tax:8, weeks:52, rows:[
+    ['Chief Executive Officer','Andy',1,0,0,0,0,''],['Medical Director','???',1,0,0,0,0,'To be hired'],['Chief Operating Officer','Whit',1,0,0,0,0,''],
+    ['Director of Operations','Cooper',1,0,0,0,0,'Salary not set'],['Chief Product Officer','Ted',1,0,0,0,0,''],
+    ['Chief Growth Officer','Ty',1,0,0,0,0,''],['Director of Member Experience','Emily',1,0,0,0,0,''],
+    ['Director, 1st Impressions','',1,50000,0,0,0,''],['Receptionist','',8,0,13,40,0,''],
+    ['Director, Pilates / Yoga','',1,18000,0,0,0,'Highlighted in binder'],['Pilates / Yoga Instructor','',12,0,50,15,0,'Hours highlighted in binder'],
+    ['Director, Performance','',1,0,0,0,0,''],['Trainer','',9,0,13,40,0,'Org chart shows 8'],['Trainer / Intern','',4,0,7.25,40,0,'Rate highlighted in binder'],
+    ['Director, Maintenance','',1,75000,0,0,0,''],['Assistant Maintenance','',1,0,15,40,0,'Org chart shows 2'],
+    ['Director, Longevity','',1,0,0,0,0,''],['Assistant, Longevity','',2,0,15,40,0,''],
+    ['Director, MedSpa','',1,0,0,0,0,''],['Injector','',6,75000,0,0,0,''],['Facials / Laser','',6,75000,0,0,0,''],
+    ['Director, Salon','',1,24000,0,0,0,'Highlighted in binder'],['Stylist / Nail Tech / Masseuse','Contractors',0,0,0,0,0,'Independent contractors, not on payroll'],
+    ['Director, Cafe','',1,50000,0,0,0,''],['Barista','',6,0,7.25,40,0,''],['Cook','',6,0,15,40,0,''],
+    ['Event Coordinator','',1,0,0,0,0,''],['Event Assistant','',0,0,7.25,40,0,''],
+    ['Director, Childcare','',1,50000,0,0,0,''],['Kid Care Assistant','',8,0,12,40,0,'']
+  ]},
+  cash:{begin:0, growth:0, linkPayroll:false,
+    memberTarget:2000,
+    rev:[
+      ['Memberships','Founding Membership',199,667],['Memberships','Discounted Membership',249,667],['Memberships','Membership',299,666],
+      ['Med Spa','Weight Loss',199,100],['Med Spa','Botox',399,125],['Med Spa','Dermal Filler',599,125],['Med Spa','Laser Services',999,35],
+      ['Med Spa','Facials',399,160],['Med Spa','Hormone / Sexual Wellness',395,35],['Med Spa','Injectables',499,30],
+      ['Salon & Spa','Salon, Spa & Nails',99,350],
+      ['Events & Rentals','Private Room Rental',795,12],
+      ['Retail, Food & Beverage','Apparel',79,150],['Retail, Food & Beverage','F&B',7,1000]],
+    exp:[['COGS (blended)',78793],['Payroll',275000],['Rent',195000],['Interest',25000],['G&A',50000]],
+    fin:[['Ownership Capital',0],['Loan Proceeds',0],['Principal Payments',0]],
+    cap:[['Lease Hold Improvements',0],['F.F.E.',0],['On-Going Enhancements',0]]},
+  scen:{names:['Break-Even',"Bank's #","Whit's #",'Stretch'], rows:[
+    ['Med Spa Elite Package',99,[100,200,500,600]],['Med Spa Revive Package',199,[75,50,400,500]],['Med Spa VIP Package',399,[10,25,300,400]],
+    ['Skin Rejuvenation Plan',299,[50,40,150,250]],['Weight Loss',395,[25,45,250,350]],['Gym Membership',179,[350,300,700,1300]],
+    ['Botox',450,[110,75,300,450]],['Dermal Filler',650,[50,70,75,125]],['Laser Services',1300,[20,15,50,125]],['Facials',495,[100,120,200,350]],
+    ['Hormone / Sexual Wellness',395,[20,15,50,150]],['Injectables',595,[10,10,20,50]],['Private Room Rental',795,[6,6,12,24]],
+    ['Salon, Spa & Nails',99,[160,150,300,600]],['Apparel',39,[25,125,50,125]],['Premium Drinks',4,[500,1000,1500,4500]]]},
+  mkt:{budget:50000, rows:[['High Level 3-D Rendering',5000],['Atlanta Production Company',22500],['Website Creation',3750],['Social Media Content',2500],
+    ['Social Media Boosts',4500],['Printed Brochures',2750],['Mailers',4000],['Influencer',2500],['SEO',2500]]},
+  slim:{start:'May 25', summer:'June 21', price:199, signups:1000, avg:129,
+    services:['Weight loss shot','Weekly call with doctor','4-week meal plan with access to a nutritionist','4-week workout plan with video demonstrations and weekly accountability calls'],
+    exp:[['Cost of Shots',15000],['Nutritionist',10000],['Doctor',10000],['Marketing',17500],['Work Books',5000]]},
+  classCfg:{dur:45, grace:15, close:'9:00 PM'},
+  studios:[
+    {name:'Studio 1',desc:'Heated',cap:32,first:'5:15 AM',last:'8:15 PM',types:['Heated Yoga','Heated Mat Pilates'],slots:{}},
+    {name:'Studio 2',desc:'Unheated',cap:28,first:'5:30 AM',last:'7:30 PM',types:['Yoga','Mat Pilates'],slots:{}},
+    {name:'Studio 3',desc:'Reformer Pilates · 12 reformers',cap:12,first:'5:45 AM',last:'7:45 PM',types:['Reformer Pilates'],slots:{}},
+    {name:'Studio 4',desc:'Empty studio',cap:12,first:'6:00 AM',last:'8:00 PM',types:['Open studio'],slots:{}}
+  ],
+  sched:{
+    'Receptionist':grid(['Director of 1st Impressions','Main 1','Main 2','Main 3','Main 4','Med Spa 1','Med Spa 2','Salon 1','Salon 2','Nails 1','Nails 2'],
+      {0:[[3,19]],1:[[0,15]],2:[[19,33]],3:[[19,33]],5:[[6,19]],6:[[15,31]],7:[[6,19]],8:[[20,31]],9:[[6,19]],10:[[20,31]]}),
+    'Performance':grid(['Ty','Trainer 1','Trainer 2','Trainer 3','Intern 1','Intern 2','Trainer 4','Trainer 5','Trainer 6','Intern 3','Intern 4'],
+      {0:[[0,5],[11,17],[23,28]],1:[[2,18]],2:[[2,18]],3:[[2,18]],4:[[3,16]],5:[[3,16]],6:[[16,33]],7:[[16,33]],8:[[16,33]],9:[[23,32]],10:[[23,32]]}),
+    'MedSpa':grid(['Whit','Injector 1','Injector 2','Injector 3','Facial 1','Facial 2','Injector 4','Injector 5','Injector 6','Facial 3','Facial 4'],{}),
+    'Hair Salon':grid(['Chair 1','Chair 2','Chair 3','Chair 4','Chair 5','Chair 6','Chair 7','Chair 8','Chair 9','Chair 10','Head Spa'],{}),
+    'Nail Salon':grid(['Chair 1','Chair 2','Chair 3','Chair 4','Chair 5','Chair 6','Chair 7','Chair 8','Chair 9','Chair 10'],{}),
+    'Cafe':grid(['Director','Barista 1','Barista 2','Cook 1','Cook 2','Cook 3','Barista 3','Barista 4','Cook 4','Cook 5','Cook 6'],{}),
+    'Day Care':grid(['Director','Kid Care 1','Kid Care 2','Kid Care 3','Kid Care 4','Kid Care 5','Kid Care 6'],
+      {0:[[3,21]],1:[[3,16]],2:[[3,16]],4:[[15,28]],5:[[16,30]],6:[[16,30]]})
+  },
+  weekly:{
+    'Performance':{note:"Employees can't work 7 days a week. To meet the proposed schedule we would need to hire 12 trainers and 8 interns. We would not schedule them full time, so they can do private lessons on off days.",
+      rows:[['Trainer AM','T1 T1 T4 T1 T4 T1 T4'],['Trainer AM','T2 T2 T5 T2 T5 T2 T5'],['Trainer AM','T3 T3 T6 T3 T6 T3 T6'],['Intern AM','I1 I1 I3 I1 I3 I1 I3'],['Intern AM','I2 I2 I4 I2 I4 I2 I4'],
+        ['Trainer PM','T7 T7 T10 T7 T10 T7 T10'],['Trainer PM','T8 T8 T11 T8 T11 T8 T11'],['Trainer PM','T9 T9 T12 T9 T12 T9 T12'],['Intern PM','I5 I5 I7 I5 I7 I5 I7'],['Intern PM','I6 I6 I8 I6 I8 I6 I8']].map(function(r){return [r[0],r[1].split(' ')];})},
+    'Day Care':{note:"Employees can't work 7 days a week. To meet the proposed schedule we would need to hire a director and 5 full-time kid care providers, then 6 part-time for the weekend.",
+      rows:[['AM','DIR DIR DIR DIR DIR KCP6 KCP6'],['AM','KCP1 KCP1 KCP1 KCP1 KCP1 KCP7 KCP7'],['AM','KCP2 KCP2 KCP2 KCP2 KCP2 KCP8 KCP8'],
+        ['PM','KCP3 KCP3 KCP3 KCP3 KCP3 KCP9 KCP9'],['PM','KCP4 KCP4 KCP4 KCP4 KCP4 KCP10 KCP10'],['PM','KCP5 KCP5 KCP5 KCP5 KCP5 KCP11 KCP11']].map(function(r){return [r[0],r[1].split(' ')];})}
+  }
+  };
+}
+
+/* ---------- state ---------- */
+var embedded = {};
+try{ embedded = JSON.parse(document.getElementById('state').textContent) || {}; }catch(e){ embedded = {}; }
+var S = (embedded && embedded.org) ? embedded : DEFAULTS();
+var artifact = null, shared = false, dirty = false, readOnly = false;
+function lsGet(){ try{ var t = localStorage.getItem(LSKEY); return t ? JSON.parse(t) : null; }catch(e){ return null; } }
+function lsSet(v){ try{ if(v) localStorage.setItem(LSKEY, JSON.stringify(v)); else localStorage.removeItem(LSKEY); }catch(e){} }
+
+/* ---------- helpers ---------- */
+function h(tag, attrs){
+  var el = document.createElement(tag);
+  if(attrs) for(var k in attrs){
+    var v = attrs[k];
+    if(v == null || v === false) continue;
+    if(k === 'class') el.className = v;
+    else if(k === 'text') el.textContent = v;
+    else if(k.slice(0,2) === 'on') el.addEventListener(k.slice(2), v);
+    else if(k === 'style') el.setAttribute('style', v);
+    else if(k === 'value') el.value = v;
+    else el.setAttribute(k, v === true ? '' : v);
+  }
+  for(var i = 2; i < arguments.length; i++) add(el, arguments[i]);
+  return el;
+}
+function add(el, c){ if(c == null || c === false) return; if(Array.isArray(c)) c.forEach(function(x){add(el,x);}); else el.appendChild(typeof c === 'object' ? c : document.createTextNode(String(c))); }
+function num(v){ var n = parseFloat(String(v).replace(/[$,%\s]/g,'')); return isFinite(n) ? n : 0; }
+var fmt0 = new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
+function usd(n){ var s = '$' + fmt0.format(Math.abs(Math.round(n))); return n < 0 ? '(' + s + ')' : s; }
+function plain(n){ var s = fmt0.format(Math.abs(Math.round(n))); return n < 0 ? '(' + s + ')' : s; }
+var lastRemoved = null;
+function removeAt(arr, i, label, after){ var snap = JSON.stringify(S); arr.splice(i,1); if(after) after(); lastRemoved = {snap:snap, label:label}; changed(); }
+function rm(label, arr, i){ return h('button',{class:'rm',type:'button',title:'Remove '+label,'aria-label':'Remove '+label,onclick:function(){ removeAt(arr, i, label); },text:'✕'}); }
+function undoRemove(){ if(!lastRemoved) return; S = JSON.parse(lastRemoved.snap); lastRemoved = null; changed(); }
+function numInput(get, set, opts){
+  opts = opts || {};
+  var inp = h('input',{class:'cell n edit ' + (opts.w || 'w-m'), inputmode:'decimal', 'aria-label':opts.label || 'value', value: String(get())});
+  inp.addEventListener('change', function(){ lastRemoved = null; set(num(inp.value)); inp.value = String(get()); changed(); });
+  return inp;
+}
+function textInput(get, set, opts){
+  opts = opts || {};
+  var inp = h('input',{class:'cell ' + (opts.w || 'w-l'), type:'text', 'aria-label':opts.label || 'text', value: get() || ''});
+  function fit(){ inp.size = Math.max(6, (inp.value || '').length + 1); }
+  fit(); inp.addEventListener('input', fit);
+  inp.addEventListener('change', function(){ lastRemoved = null; set(inp.value); changed(); });
+  return inp;
+}
+
+/* ---------- calculations ---------- */
+function payrollRow(r){ if(!r.paid) return {tax:0, monthly:0, base:0}; var n=num(r.n), base = num(r.sal)/12 + num(r.hr)*num(r.hrs)*num(S.payroll.weeks)/12; var tax = base*num(S.payroll.tax)/100; return {tax:tax, base:base, monthly:n*(base+tax+num(r.ben))}; }
+function payrollTotal(){ return S.staff.reduce(function(a,r){return a+payrollRow(r).monthly;},0); }
+function deptTotal(name){ return S.staff.filter(function(r){return r.dept===name;}).reduce(function(a,r){return a+payrollRow(r).monthly;},0); }
+function payrollHeads(){ return S.staff.reduce(function(a,r){return a+(r.paid?num(r.n):0);},0); }
+function scenArr(r){ if(!Array.isArray(r[4])) r[4] = [0,0,0,0]; return r[4]; }
+function activeScen(){ var a = S.cash.scenario; return (a === 0 || a === 1 || a === 2 || a === 3) ? a : -1; }
+function scenName(a){ return a < 0 ? 'Current plan' : S.scen.names[a]; }
+function volOf(r, a){ if(a === undefined) a = activeScen(); return a < 0 ? num(r[3]) : num(scenArr(r)[a]); }
+function setVol(r, v, a){ if(a === undefined) a = activeScen(); if(a < 0) r[3] = v; else scenArr(r)[a] = v; }
+function cashModel(){
+  var c = S.cash, g = num(c.growth)/100, months = [], begin = num(c.begin);
+  for(var m = 0; m < 12; m++){
+    var f = Math.pow(1+g, m);
+    var rev = c.rev.map(function(r){ return num(r[2])*volOf(r)*f; });
+    var exp = c.exp.map(function(r){ return (c.linkPayroll !== false && /^payroll$/i.test(r[0])) ? payrollTotal() : num(r[1]); });
+    var fin = c.fin.map(function(r){ return /principal|repay|distribution|payment/i.test(r[0]) ? -num(r[1]) : num(r[1]); });
+    var cap = c.cap.map(function(r){ return -num(r[1]); });
+    var tr = sum(rev), te = sum(exp), ops = tr - te, tf = sum(fin), tc = sum(cap), end = begin + ops + tf + tc;
+    months.push({begin:begin, rev:rev, exp:exp, fin:fin, cap:cap, tr:tr, te:te, ops:ops, tf:tf, tc:tc, end:end});
+    begin = end;
+  }
+  return months;
+}
+function sum(a){ return a.reduce(function(x,y){return x+y;},0); }
+function orgHeads(){ return S.staff.reduce(function(a,r){return a+num(r.n);},0); }
+function scenTotals(){ return [-1,0,1,2,3].map(function(i){ return S.cash.rev.reduce(function(a,r){ return a + num(r[2])*volOf(r,i); },0); }); }
+function _unusedSlim(){ var s=S.slim, rev=num(s.signups)*num(s.avg), ex=sum(s.exp.map(function(e){return num(e[1]);})); return {rev:rev, exp:ex, net:rev-ex, margin: rev ? (rev-ex)/rev : 0, be: num(s.avg) ? Math.ceil(ex/num(s.avg)) : 0}; }
+
+/* ---------- views ---------- */
+var VIEWS = [
+  ['overview','Overview'],['org','Org Chart'],['payroll','Payroll'],['income','Income Statement'],['cash','Cash Flow'],['scenarios','Revenue Scenarios'],
+  ['marketing','Marketing'],['classes','Classes'],['schedules','Schedules'],['weekly','Weekly Rotations']
+];
+var current = 'overview', schedDept = 'Receptionist', weeklyDept = 'Performance';
+var root = document.getElementById('root');
+var main, nav, saveState, savebar, saveMsg;
+
+function shell(){
+  root.textContent = '';
+  saveState = h('div',{class:'save-state', 'aria-live':'polite'});
+  nav = h('nav',{class:'tabs','aria-label':'Binder sections'});
+  VIEWS.forEach(function(v){ nav.appendChild(h('a',{href:'#'+v[0], 'data-v':v[0], text:v[1]})); });
+  var header = h('header',{class:'top'},
+    h('div',{class:'top-inner'}, h('div',{class:'brand'}, h('h1',{text:'Wave Wellness Ops Binder'}), h('p',{text:'805 Pine Grove Dr, Wilmington · Plans & projections for 2027'})),
+      h('div',{class:'top-right'}, saveState, GH ? h('button',{class:'btn small gh-btn',type:'button',onclick:openGh,id:'gh-btn',text:'GitHub'}) : null)),
+    nav);
+  banner = h('div',{class:'banner',role:'status'});
+  main = h('main',{id:'main'});
+  saveMsg = h('span',{text:'You have unsaved changes.'});
+  savebar = h('div',{class:'savebar', role:'region', 'aria-label':'Save changes'},
+    h('div',{class:'savebar-inner'}, saveMsg,
+      h('div',{class:'row'},
+        h('button',{class:'btn', type:'button', onclick:discard, text:'Undo changes'}),
+        h('button',{class:'btn primary', type:'button', onclick:save, text:'Save changes'}))));
+  root.append(header, banner, main, savebar);
+  updateSaveState();
+}
+function updateSaveState(){
+  var t = S.savedAt ? 'Last saved ' + new Date(S.savedAt).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : 'Figures from the printed binder';
+  var where = GH ? (ghUser ? ' · saving to GitHub as ' + ghUser : ' · view only until you connect GitHub') : (shared ? ' · shared with everyone who opens this page' : '');
+  saveState.textContent = t + where;
+  var b = document.getElementById('gh-btn'); if(b) b.textContent = ghUser ? 'GitHub \u2713' : 'Connect GitHub';
+}
+function go(){
+  var id = (location.hash || '').replace('#','');
+  if(!VIEWS.some(function(v){return v[0]===id;})) id = 'overview';
+  current = id;
+  Array.prototype.forEach.call(nav.children, function(a){ if(a.getAttribute('data-v') === id) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
+  render();
+}
+function render(){
+  var y = window.scrollY;
+  main.textContent = '';
+  if(GH && ghLocked){
+    main.append(h('div',{class:'card',style:'max-width:520px;margin:40px auto;display:grid;gap:10px;text-align:center'},
+      h('h2',{text:'Connect GitHub to open the binder'}),
+      h('p',{class:'note',style:'margin:0 auto',text:'The binder’s numbers are kept in a private GitHub repository. Connect once with your GitHub token and this browser will remember you.'}),
+      h('div',null, h('button',{class:'btn primary',type:'button',onclick:openGh,text:'Connect GitHub'}))));
+    return;
+  }
+  ({overview:vOverview, org:vOrg, payroll:vPayroll, income:vIncome, cash:vCash, scenarios:vScen, marketing:vMkt, classes:vClasses, schedules:vSched, weekly:vWeekly})[current]();
+  window.scrollTo(0, y);
+}
+function changed(){ dirty = true; savebar.classList.add('show'); saveMsg.textContent = 'Previewing changes. They\u2019ll be undone if you leave or reload without saving.';
+  if(lastRemoved){ var r = lastRemoved; saveMsg.textContent = 'Removed “' + r.label + '”. '; saveMsg.appendChild(h('button',{class:'btn small',type:'button',onclick:undoRemove,text:'Undo'})); }
+  render(); }
+function head(title, desc, extra){ return h('div',{class:'section-head'}, h('div',null, h('h2',{text:title}), desc ? h('p',{text:desc}) : null), extra || null); }
+
+/* Overview */
+function vOverview(){
+  var cm = cashModel(), pay = payrollTotal(), st = scenTotals(), act = activeScen();
+  main.append(head('Overview','Every number here comes from the tabs above. Change a figure on any tab and this summary updates.'));
+  function tile(label, value, sub, to){ return h('div',{class:'tile go', role:'link', tabindex:'0', onclick:function(){location.hash=to;}, onkeydown:function(e){ if(e.key==='Enter') location.hash=to; }}, h('div',{class:'label',text:label}), h('div',{class:'value',text:value}), h('div',{class:'sub',text:sub})); }
+  main.append(h('div',{class:'tiles'},
+    tile('Monthly revenue', usd(cm[0].tr), 'January 2027 · ' + scenName(act), 'cash'),
+    tile('Monthly cash from operations', usd(cm[0].ops), 'January 2027', 'cash'),
+    tile('Cash at year end', usd(cm[11].end), 'December 2027', 'cash'),
+    tile('2027 net income', usd(sum(incomeModel().map(function(m){return m.net;}))), 'Income Statement', 'income'),
+    tile('Monthly payroll', usd(pay), payrollHeads() + ' people on payroll', 'payroll'),
+    tile('Org headcount', plain(orgHeads()), 'Including contractors', 'org'),
+    tile('Cash flow is using', scenName(act), 'Change on Revenue Scenarios', 'scenarios')));
+  // cash chart
+  var card = h('div',{class:'card'}, h('h3',{text:'Ending cash by month, 2027'}));
+  card.appendChild(cashChart(cm));
+  var sc = h('div',{class:'card'}, h('h3',{text:'Revenue by scenario'}));
+  var max = Math.max.apply(null, st.concat([1]));
+  var bars = h('div',{class:'bars'});
+  st.forEach(function(v,i){ bars.appendChild(h('div',{class:'bar-row'+((i-1)===act?' on':'')}, h('span',{text:scenName(i-1)}), h('div',{class:'bar-track'}, h('div',{class:'bar-fill', style:'width:'+Math.max(0,v/max*100).toFixed(1)+'%'})), h('span',{class:'n',text:usd(v)}))); });
+  sc.append(bars, h('p',{class:'note',text:'Monthly revenue: price × volume for each service. The highlighted one drives the cash flow.'}));
+  main.append(h('div',{class:'grid-2'}, card, sc));
+  var flags = h('div',{class:'card'}, h('h3',{text:'Numbers to double-check'}), h('p',{class:'note',style:'margin:0 0 8px',text:'Every tab reads from the same numbers: Org Chart and Payroll share one staff list, Payroll feeds Cash Flow, and Cash Flow feeds the Income Statement, Revenue Scenarios and this page.'}),
+    h('div',{style:'display:grid;gap:8px'},
+      h('div',{class:'flag',text:'COGS is labeled 23.5% in the binder, but the $78,793 used each month is about '+(cm[0].tr ? (num(S.cash.exp[0][1])/cm[0].tr*100).toFixed(1) : '0')+'% of monthly revenue.'}),
+      S.cash.linkPayroll === false ? h('div',{class:'flag',text:'Cash flow is using a typed-in payroll figure instead of the Payroll tab ('+usd(pay)+'/mo). Turn on "Use Payroll tab total" on the Cash Flow tab to reconnect them.'}) : null,
+      S.staff.filter(function(r){ return r.paid && num(r.n) > 0 && !num(r.sal) && !(num(r.hr) && num(r.hrs)); }).length ? h('div',{class:'flag',text:'These paid positions have no salary or hourly rate yet, so they add $0 to payroll: ' + S.staff.filter(function(r){ return r.paid && num(r.n) > 0 && !num(r.sal) && !(num(r.hr) && num(r.hrs)); }).map(function(r){ return r.title; }).join(', ') + '.'}) : null));
+  main.append(flags);
+}
+function cashChart(cm){
+  var W = 640, H = 220, pl = 64, pr = 12, pt = 12, pb = 28, NS = 'http://www.w3.org/2000/svg';
+  var vals = cm.map(function(m){return m.end;}), max = Math.max.apply(null, vals.concat([0])), min = Math.min.apply(null, vals.concat([0]));
+  var span = (max - min) || 1, step = niceStep(span/4), top = Math.ceil(max/step)*step, bot = Math.floor(min/step)*step; span = (top-bot)||1;
+  function y(v){ return pt + (top - v)/span*(H-pt-pb); }
+  var svg = document.createElementNS(NS,'svg'); svg.setAttribute('viewBox','0 0 '+W+' '+H); svg.setAttribute('width','100%'); svg.setAttribute('role','img'); svg.setAttribute('aria-label','Ending cash by month');
+  function el(t,a){ var e=document.createElementNS(NS,t); for(var k in a) e.setAttribute(k,a[k]); svg.appendChild(e); return e; }
+  for(var v = bot; v <= top + 1e-6; v += step){ el('line',{x1:pl,x2:W-pr,y1:y(v),y2:y(v),stroke:'var(--line)','stroke-width':1}); var t=el('text',{x:pl-8,y:y(v)+4,'text-anchor':'end'}); t.textContent = compact(v); }
+  var bw = (W-pl-pr)/12;
+  cm.forEach(function(m,i){
+    var x = pl + i*bw + bw*0.18, w = bw*0.64, y0 = y(0), y1 = y(m.end);
+    el('rect',{x:x,y:Math.min(y0,y1),width:w,height:Math.max(1,Math.abs(y1-y0)),rx:3,fill: m.end < 0 ? 'var(--bad)' : (i===11 ? 'var(--accent)' : 'color-mix(in srgb, var(--accent) 45%, transparent)')});
+    var t = el('text',{x:x+w/2,y:H-8,'text-anchor':'middle'}); t.textContent = ['J','F','M','A','M','J','J','A','S','O','N','D'][i];
+  });
+  var last = cm[11].end, lt = el('text',{x:pl+11*bw+bw/2,y:Math.max(12,y(last)-6),'text-anchor':'middle','font-weight':'700'}); lt.textContent = compact(last); lt.setAttribute('style','fill:var(--ink)');
+  return svg;
+}
+function niceStep(x){ if(x<=0) return 1; var p = Math.pow(10, Math.floor(Math.log10(x))), f = x/p; return (f<=1?1:f<=2?2:f<=5?5:10)*p; }
+function compact(v){ var a = Math.abs(v), s = a >= 1e6 ? (a/1e6).toFixed(a>=1e7?0:1)+'M' : a >= 1e3 ? Math.round(a/1e3)+'K' : String(Math.round(a)); return (v<0?'-':'')+'$'+s; }
+
+/* Org chart */
+function deptNames(){ return S.org.depts.map(function(d){ return d.name; }); }
+function leaders(){ return S.staff.filter(function(r){ return r.dept === 'Leadership'; }); }
+function vOrg(){
+  main.append(head('Organization Chart','Shares one staff list with the Payroll tab: change a title, name or headcount here and Payroll and the Cash Flow update too.', h('span',{class:'pill',text:'Total headcount: '+plain(orgHeads())})));
+  var wrap = h('div',{class:'card'}), L = leaders();
+  function person(r, cls){
+    var title = h('textarea',{class:'role-input', rows:'2', 'aria-label':'Title'}); title.value = r.title || '';
+    title.addEventListener('change', function(){ lastRemoved=null; r.title = title.value.replace(/\s+/g,' ').trim(); changed(); });
+    return h('div',{class:'person '+(cls||'')}, title, textInput(function(){return r.person;}, function(v){r.person=v;}, {w:'',label:(r.title||'Leader')+' name'}),
+      cls === 'ceo' ? null : h('button',{class:'iconbtn remove',type:'button','aria-label':'Remove '+r.title,onclick:function(){ removeAt(S.staff, S.staff.indexOf(r), r.title); },text:'×'}));
+  }
+  if(L[0]) wrap.append(h('div',{class:'org-ceo'}, person(L[0], 'ceo')), h('div',{class:'connector'}));
+  var ex = h('div',{class:'execs'});
+  L.slice(1).forEach(function(r){ ex.appendChild(person(r)); });
+  wrap.append(h('h3',{class:'lead-head',text:'Leadership team'}), ex,
+    h('div',{class:'row',style:'justify-content:center;margin-top:12px'}, h('button',{class:'btn small',type:'button',onclick:function(){ var at = S.staff.indexOf(L[L.length-1]) + 1; S.staff.splice(at, 0, newPos('Leadership','New title')); lastRemoved=null; changed(); },text:'Add leader'})));
+  main.append(wrap);
+  var dl = h('datalist',{id:'leader-titles'}, L.map(function(r){ return h('option',{value:r.title}); })); main.append(dl);
+  var depts = h('div',{class:'depts'});
+  S.org.depts.forEach(function(d, di){
+    var ul = h('ul'), rows = S.staff.filter(function(r){ return r.dept === d.name; });
+    rows.forEach(function(r){
+      var inp = numInput(function(){return r.n;}, function(v){r.n=Math.max(0,Math.round(v));}, {w:'', label:r.title+' headcount'});
+      ul.appendChild(h('li',null, h('div',{class:'namecell'}, rm(r.title, S.staff, S.staff.indexOf(r)), textInput(function(){return r.title;}, function(v){r.title=v;}, {w:'',label:'Role'})), r.paid ? null : h('span',{class:'pill',text:'Contractor'}), inp));
+    });
+    if(!rows.length) ul.appendChild(h('li',{class:'note',text:'No roles yet.'}));
+    var total = rows.reduce(function(a,r){return a+num(r.n);},0), cost = deptTotal(d.name);
+    var leadIn = h('input',{class:'cell',type:'text',list:'leader-titles',value:d.lead||'','aria-label':d.name+' led by'}); leadIn.addEventListener('change', function(){ lastRemoved=null; d.lead = leadIn.value; changed(); });
+    depts.appendChild(h('div',{class:'dept'},
+      h('div',{class:'dept-top'}, textInput(function(){return d.name;}, function(v){ var old = d.name; S.staff.forEach(function(r){ if(r.dept === old) r.dept = v; }); d.name = v; }, {w:'',label:'Department name'}), h('button',{class:'btn small ghost',type:'button',onclick:function(){ removeAt(S.org.depts, di, d.name+' department', function(){ S.staff = S.staff.filter(function(r){ return r.dept !== d.name; }); }); },text:'Remove'})),
+      h('div',{class:'lead'}, h('span',{text:'Led by'}), leadIn), ul,
+      h('button',{class:'btn small',type:'button',style:'margin-top:8px',onclick:function(){ S.staff.push(newPos(d.name,'New role')); lastRemoved=null; changed(); },text:'Add role'}),
+      h('div',{class:'sum'}, h('span',{text:'People'}), h('span',{text:plain(total)})),
+      h('div',{class:'sum',style:'border-top:0;margin-top:0;padding-top:0'}, h('span',{text:'Payroll / mo'}), h('span',{text:usd(cost)}))));
+  });
+  main.append(h('h3',{text:'Departments'}), depts, h('div',{class:'row'}, h('button',{class:'btn',type:'button',onclick:function(){ S.org.depts.push({name:'New department',lead:''}); S.staff.push(newPos('New department','New role')); lastRemoved=null; changed(); },text:'Add department'})));
+}
+function newPos(dept, title){ return {dept:dept, title:title, person:'', n:1, sal:0, hr:0, hrs:0, ben:0, note:'', paid:true}; }
+
+/* Payroll */
+function vPayroll(){
+  var p = S.payroll, tot = payrollTotal();
+  main.append(head('Payroll','Same staff list as the Org Chart, and the total feeds the Cash Flow and Income Statement. Monthly cost = people × (salary ÷ 12 + hourly × hours × weeks ÷ 12) plus payroll tax and benefits.'));
+  main.append(h('div',{class:'tiles'},
+    h('div',{class:'tile'}, h('div',{class:'label',text:'Monthly payroll'}), h('div',{class:'value',text:usd(tot)}), h('div',{class:'sub',text: S.cash.linkPayroll === false ? 'Not linked to Cash Flow' : 'Used by Cash Flow'})),
+    h('div',{class:'tile'}, h('div',{class:'label',text:'Annual payroll'}), h('div',{class:'value',text:usd(tot*12)})),
+    h('div',{class:'tile'}, h('div',{class:'label',text:'People on payroll'}), h('div',{class:'value',text:plain(payrollHeads())}), h('div',{class:'sub',text:plain(orgHeads()-payrollHeads())+' contractors'}))));
+  main.append(h('div',{class:'card row'},
+    h('label',{class:'inline'}, 'Payroll tax %', numInput(function(){return p.tax;}, function(v){p.tax=v;}, {w:'w-s',label:'Payroll tax percent'})),
+    h('label',{class:'inline'}, 'Weeks per year', numInput(function(){return p.weeks;}, function(v){p.weeks=v;}, {w:'w-s',label:'Weeks per year'}))));
+  var tb = h('tbody'), groups = ['Leadership'].concat(deptNames());
+  var orphans = S.staff.filter(function(r){ return groups.indexOf(r.dept) < 0; });
+  if(orphans.length) groups.push('__none');
+  groups.forEach(function(g){
+    var rows = g === '__none' ? orphans : S.staff.filter(function(r){ return r.dept === g; });
+    tb.appendChild(h('tr',{class:'sect'}, h('td',{class:'stick-col',text: g === '__none' ? 'No department' : g}), h('td',{colspan:'8'}), h('td',{class:'n',text:usd(rows.reduce(function(a,r){return a+payrollRow(r).monthly;},0))}), h('td'), h('td')));
+    rows.forEach(function(r){
+      var c = payrollRow(r), i = S.staff.indexOf(r);
+      var paid = h('input',{type:'checkbox','aria-label':'On payroll'}); paid.checked = !!r.paid; paid.addEventListener('change', function(){ lastRemoved=null; r.paid = paid.checked; changed(); });
+      var dsel = h('select',{class:'cell','aria-label':'Department'}, ['Leadership'].concat(deptNames()).map(function(n){ var o = h('option',{value:n,text:n}); if(n===r.dept) o.selected = true; return o; }));
+      if(g === '__none'){ var o0 = h('option',{value:'',text:'Choose…'}); o0.selected = true; dsel.insertBefore(o0, dsel.firstChild); }
+      dsel.addEventListener('change', function(){ lastRemoved=null; r.dept = dsel.value; changed(); });
+      tb.appendChild(h('tr',{class: r.paid ? '' : 'unpaid'},
+        h('td',{class:'stick-col'}, h('div',{class:'namecell'}, rm(r.title||'position', S.staff, i), textInput(function(){return r.title;}, function(v){r.title=v;}, {label:'Position'}))),
+        h('td',null, textInput(function(){return r.person;}, function(v){r.person=v;}, {w:'w-m',label:'Person'})),
+        h('td',null, dsel),
+        h('td',{class:'n'}, numInput(function(){return r.n;}, function(v){r.n=Math.max(0,v);}, {w:'w-s',label:'Number in role'})),
+        h('td',{class:'n'}, numInput(function(){return r.sal;}, function(v){r.sal=v;}, {label:'Annual salary'})),
+        h('td',{class:'n'}, numInput(function(){return r.hr;}, function(v){r.hr=v;}, {w:'w-s',label:'Hourly rate'})),
+        h('td',{class:'n'}, numInput(function(){return r.hrs;}, function(v){r.hrs=v;}, {w:'w-s',label:'Hours per week'})),
+        h('td',{class:'n'}, numInput(function(){return r.ben;}, function(v){r.ben=v;}, {w:'w-s',label:'Benefits per person per month'})),
+        h('td',{style:'text-align:center'}, paid),
+        h('td',{class:'n',text: r.paid ? usd(c.monthly) : '—'}),
+        h('td',{class:'n',text: r.paid ? usd(c.monthly*12) : '—'}),
+        h('td',null, r.note ? h('span',{class:'pill warn',text:r.note}) : '')));
+    });
+    if(g !== '__none') tb.appendChild(h('tr',{class:'addrow'}, h('td',{class:'stick-col'}, h('button',{class:'btn small ghost',type:'button',onclick:function(){ var last = rows.length ? S.staff.indexOf(rows[rows.length-1]) + 1 : S.staff.length; S.staff.splice(last, 0, newPos(g,'New position')); lastRemoved=null; changed(); },text:'+ Add to '+g})), h('td',{colspan:'11'})));
+  });
+  tb.appendChild(h('tr',{class:'total'}, h('td',{class:'stick-col',text:'Total'}), h('td'), h('td'), h('td',{class:'n',text:plain(payrollHeads())}), h('td'),h('td'),h('td'),h('td'),h('td'), h('td',{class:'n',text:usd(tot)}), h('td',{class:'n',text:usd(tot*12)}), h('td')));
+  var t = h('table',null, h('thead',null, h('tr',null, ['Position','Person','Department','#','Salary / yr','Hourly','Hrs / wk','Benefits / mo','On payroll','Monthly','Annual','Note'].map(function(x,i){ return h('th',{class:((i>=3&&i<=7)||i===9||i===10)?'n':(i===0?'stick-col':''),text:x}); }))), tb);
+  main.append(h('div',{class:'card'}, h('div',{class:'scroll'}, t), h('p',{class:'note',text:'Untick "On payroll" for contractors: they still count on the Org Chart but add nothing to payroll.'})));
+}
+
+/* Income statement */
+var incPeriod = 'q';
+function incomeModel(){
+  var cm = cashModel(), c = S.cash, inc = S.inc || (S.inc = {dep:0, tax:0});
+  var groups = [];
+  c.rev.forEach(function(r, i){ var g = groups.filter(function(x){return x.name===r[0];})[0]; if(!g){ g = {name:r[0], idx:[]}; groups.push(g); } g.idx.push(i); });
+  var isC = function(n){ return /cogs|cost of goods/i.test(n); }, isI = function(n){ return /interest/i.test(n); };
+  return cm.map(function(m){
+    var o = {groups: groups.map(function(g){ return sum(g.idx.map(function(i){ return m.rev[i]; })); }), rev: m.tr, opex: []};
+    o.cogs = 0; o.interest = 0;
+    c.exp.forEach(function(e, i){ var v = m.exp[i]; if(isC(e[0])) o.cogs += v; else if(isI(e[0])) o.interest += v; else o.opex.push(v); });
+    o.gross = o.rev - o.cogs; o.topex = sum(o.opex); o.ebitda = o.gross - o.topex; o.dep = num(inc.dep);
+    o.ebit = o.ebitda - o.dep; o.pretax = o.ebit - o.interest; o.tax = Math.max(0, o.pretax) * num(inc.tax) / 100; o.net = o.pretax - o.tax;
+    return o;
+  });
+}
+function incomeLabels(){ var c = S.cash, isC = function(n){ return /cogs|cost of goods/i.test(n); }, isI = function(n){ return /interest/i.test(n); };
+  var groups = []; c.rev.forEach(function(r){ if(groups.indexOf(r[0]) < 0) groups.push(r[0]); });
+  return {groups: groups, cogs: c.exp.filter(function(e){return isC(e[0]);}).map(function(e){return e[0];}).join(', ') || 'Cost of goods sold', opex: c.exp.filter(function(e){ return !isC(e[0]) && !isI(e[0]); }).map(function(e){ return e[0]; })}; }
+function vIncome(){
+  var months = incomeModel(), L = incomeLabels(), inc = S.inc, act = activeScen();
+  var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var cols = incPeriod === 'q' ? [[0,1,2],[3,4,5],[6,7,8],[9,10,11]].map(function(ix,k){ return {label:'Q'+(k+1), ix:ix}; }) : MON.map(function(m,k){ return {label:m, ix:[k]}; });
+  cols.push({label:'FY 2027', ix:[0,1,2,3,4,5,6,7,8,9,10,11], fy:true});
+  function agg(fn, col){ return sum(col.ix.map(function(k){ return fn(months[k]); })); }
+  var fy = cols[cols.length-1], fyRev = agg(function(m){return m.rev;}, fy), fyNet = agg(function(m){return m.net;}, fy), fyGross = agg(function(m){return m.gross;}, fy), fyEbitda = agg(function(m){return m.ebitda;}, fy);
+  main.append(head('Income Statement — 2027','Built from the Cash Flow tab, so it updates with every price, volume and expense change. Running on ' + scenName(act) + ' volumes.'));
+  function pct(v){ return fyRev ? (v/fyRev*100).toFixed(1)+'%' : '–'; }
+  main.append(h('div',{class:'tiles'},
+    h('div',{class:'tile'}, h('div',{class:'label',text:'Revenue'}), h('div',{class:'value',text:usd(fyRev)}), h('div',{class:'sub',text:'FY 2027'})),
+    h('div',{class:'tile'}, h('div',{class:'label',text:'Gross profit'}), h('div',{class:'value',text:usd(fyGross)}), h('div',{class:'sub',text:pct(fyGross)+' gross margin'})),
+    h('div',{class:'tile'}, h('div',{class:'label',text:'EBITDA'}), h('div',{class:'value',text:usd(fyEbitda)}), h('div',{class:'sub',text:pct(fyEbitda)+' of revenue'})),
+    h('div',{class:'tile'}, h('div',{class:'label',text:'Net income'}), h('div',{class:'value'+(fyNet<0?' neg':''),text:usd(fyNet)}), h('div',{class:'sub',text:pct(fyNet)+' net margin'}))));
+  main.append(h('div',{class:'card row'},
+    h('div',{class:'chips',role:'group','aria-label':'Period'}, [['q','Quarterly'],['m','Monthly']].map(function(o){ return h('button',{class:'chip',type:'button','aria-pressed':String(incPeriod===o[0]),onclick:function(){ incPeriod=o[0]; render(); },text:o[1]}); })),
+    h('label',{class:'inline'}, 'Depreciation / mo', numInput(function(){return inc.dep;}, function(v){inc.dep=Math.max(0,v);}, {w:'w-m',label:'Depreciation per month'})),
+    h('label',{class:'inline'}, 'Income tax %', numInput(function(){return inc.tax;}, function(v){inc.tax=Math.max(0,v);}, {w:'w-s',label:'Income tax percent'}))));
+  var tb = h('tbody');
+  function sect(t){ tb.appendChild(h('tr',{class:'sect'}, h('td',{class:'stick-col',text:t}), cols.map(function(){return h('td');}), h('td'))); }
+  function row(label, fn, cls, isPct){
+    var cells = cols.map(function(col){
+      if(isPct){ var r = agg(function(m){return m.rev;}, col), v = agg(fn, col); return h('td',{class:'n pct'+(col.fy?' fy':''),text: r ? (v/r*100).toFixed(1)+'%' : '–'}); }
+      var v = agg(fn, col); return h('td',{class:'n'+(v<0?' neg':'')+(col.fy?' fy':''),text:plain(v)});
+    });
+    var share = isPct ? h('td') : h('td',{class:'n pct',text:pct(agg(fn, fy))});
+    tb.appendChild(h('tr',{class:cls||''}, h('td',{class:'stick-col',text:label}), cells, share));
+  }
+  sect('Revenue');
+  L.groups.forEach(function(g, gi){ row(g, function(m){ return m.groups[gi]; }); });
+  row('Total revenue', function(m){return m.rev;}, 'total');
+  sect('Cost of goods sold');
+  row(L.cogs, function(m){return -m.cogs;});
+  row('Gross profit', function(m){return m.gross;}, 'hi');
+  row('Gross margin', function(m){return m.gross;}, 'pctrow', true);
+  sect('Operating expenses');
+  L.opex.forEach(function(n, k){ row(n, function(m){ return -m.opex[k]; }); });
+  row('Total operating expenses', function(m){return -m.topex;}, 'total');
+  row('EBITDA', function(m){return m.ebitda;}, 'hi');
+  row('Depreciation', function(m){return -m.dep;});
+  row('Operating income (EBIT)', function(m){return m.ebit;}, 'total');
+  row('Interest expense', function(m){return -m.interest;});
+  row('Income before taxes', function(m){return m.pretax;}, 'total');
+  row('Income tax', function(m){return -m.tax;});
+  row('Net income', function(m){return m.net;}, 'hi');
+  row('Net margin', function(m){return m.net;}, 'pctrow', true);
+  var t = h('table',{class:'inc'}, h('thead',null, h('tr',null, h('th',{class:'stick-col',text:''}), cols.map(function(col){ return h('th',{class:'n'+(col.fy?' fy':''),text:col.label}); }), h('th',{class:'n',text:'% of rev'}))), tb);
+  main.append(h('div',{class:'card'}, h('div',{class:'scroll'}, t),
+    h('p',{class:'note',text:'Financing and capital improvements are left out because they change cash, not income. COGS and interest are picked out of the Cash Flow expenses by name, and every other expense counts as operating. Depreciation and income tax start at zero, so net income matches cash from operations until you enter them.'})));
+}
+
+/* Cash flow */
+function vCash(){
+  var c = S.cash, cm = cashModel();
+  var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  main.append(head('Cash Flow Projections — 2027','Edit the highlighted inputs. Each month, the yearly totals and ending cash recalculate.'));
+  main.append(h('div',{class:'tiles'},
+    h('div',{class:'tile'}, h('div',{class:'label',text:'2027 revenue'}), h('div',{class:'value',text:usd(sum(cm.map(function(m){return m.tr;})))})),
+    h('div',{class:'tile'}, h('div',{class:'label',text:'2027 cash from operations'}), h('div',{class:'value',text:usd(sum(cm.map(function(m){return m.ops;})))})),
+    h('div',{class:'tile'}, h('div',{class:'label',text:'Ending cash, Dec 2027'}), h('div',{class:'value',text:usd(cm[11].end)}))));
+  var linkBox = h('input',{type:'checkbox',id:'linkpay'}); linkBox.checked = c.linkPayroll !== false;
+  linkBox.addEventListener('change', function(){ c.linkPayroll = linkBox.checked; changed(); });
+  main.append(scenPicker('Volumes come from'));
+  main.append(h('div',{class:'card row'},
+    h('label',{class:'inline'}, 'Starting cash', numInput(function(){return c.begin;}, function(v){c.begin=v;}, {label:'Starting cash'})),
+    h('label',{class:'inline'}, 'Monthly volume growth %', numInput(function(){return c.growth;}, function(v){c.growth=v;}, {w:'w-s',label:'Monthly growth percent'})),
+    h('label',{class:'inline'}, 'Membership target', numInput(function(){return c.memberTarget;}, function(v){c.memberTarget=Math.max(0,Math.round(v));}, {w:'w-s',label:'Membership target'})),
+    h('label',{class:'inline',for:'linkpay'}, linkBox, 'Use Payroll tab total ('+usd(payrollTotal())+'/mo)')));
+  var tb = h('tbody');
+  function monthCells(get, neg){ return cm.map(function(m,i){ var v = get(m,i); return h('td',{class:'n'+(v<0?' neg':''),text:plain(v)}); }); }
+  function sect(t){ tb.appendChild(h('tr',{class:'sect'}, h('td',{class:'stick-col',colspan:'3',text:t}), cm.map(function(){return h('td');}), h('td'))); }
+  function line(label, inputs, get, cls){ var tot = sum(cm.map(get)); tb.appendChild(h('tr',{class:cls||''}, typeof label === 'string' ? h('td',{class:'stick-col',text:label}) : h('td',{class:'stick-col'}, label), inputs[0] || h('td'), inputs[1] || h('td'), monthCells(get), h('td',{class:'n'+(tot<0?' neg':''),text:plain(tot)}))); }
+  function nameCell(arr, i, k, what){ var r = arr[i]; return h('div',{class:'namecell'}, rm(r[k] || what, arr, i), textInput(function(){return r[k];}, function(v){r[k]=v;}, {label:what+' name'})); }
+  function addRow(text, fn){ tb.appendChild(h('tr',{class:'addrow'}, h('td',{class:'stick-col',colspan:'3'}, h('button',{class:'btn small ghost',type:'button',onclick:function(){ lastRemoved=null; fn(); changed(); },text:text})), cm.map(function(){return h('td');}), h('td'))); }
+  line('Beginning cash', [], function(m){return m.begin;}, 'hi');
+  var groups = [];
+  c.rev.forEach(function(r, i){ var g = groups.filter(function(x){return x.name===r[0];})[0]; if(!g){ g = {name:r[0], idx:[]}; groups.push(g); } g.idx.push(i); });
+  groups.forEach(function(g){
+    sect('Revenue: ' + g.name);
+    g.idx.forEach(function(i){ var r = c.rev[i];
+      line(nameCell(c.rev, i, 1, 'revenue line'), [h('td',{class:'n'}, numInput(function(){return r[2];}, function(v){r[2]=v;}, {w:'w-s',label:r[1]+' price'})), h('td',{class:'n'}, numInput(function(){return volOf(r);}, function(v){setVol(r,v);}, {w:'w-s',label:r[1]+' monthly volume'}))], function(m){return m.rev[i];});
+    });
+    addRow('+ Add line to ' + g.name, function(){ c.rev.splice(g.idx[g.idx.length-1] + 1, 0, [g.name,'New item',0,0,[0,0,0,0]]); });
+    if(g.idx.length > 1){
+      var vol = sum(g.idx.map(function(i){return volOf(c.rev[i]);}));
+      var volCell = h('td',{class:'n'}, h('strong',{text:plain(vol)}));
+      if(g.name === 'Memberships'){
+        var t = num(c.memberTarget), diff = vol - t;
+        volCell.appendChild(h('div',null, h('span',{class:'pill '+(diff===0?'good':'warn'),text: diff===0 ? 'Target '+plain(t) : (diff>0?'+':'')+plain(diff)+' vs '+plain(t)})));
+      }
+      line(g.name + ' total', [h('td'), volCell], function(m){ return sum(g.idx.map(function(i){return m.rev[i];})); }, 'subtot');
+    }
+  });
+  addRow('+ Add revenue group', function(){ c.rev.push(['New group','New item',0,0,[0,0,0,0]]); });
+  line('Total revenue', [], function(m){return m.tr;}, 'total');
+  sect('Operating expenses (monthly)');
+  c.exp.forEach(function(r, i){
+    var linked = c.linkPayroll !== false && /^payroll$/i.test(r[0]);
+    line(nameCell(c.exp, i, 0, 'expense'), [h('td'), h('td',{class:'n'}, linked ? h('span',{class:'pill',text:'Linked'}) : numInput(function(){return r[1];}, function(v){r[1]=v;}, {label:r[0]+' per month'}))], function(m){return -m.exp[i];});
+  });
+  addRow('+ Add expense', function(){ c.exp.push(['New expense',0]); });
+  line('Total operating expenses', [], function(m){return -m.te;}, 'total');
+  line('Cash flow from operations', [], function(m){return m.ops;}, 'hi');
+  sect('Financing activities (monthly)');
+  c.fin.forEach(function(r, i){ line(nameCell(c.fin, i, 0, 'financing line'), [h('td'), h('td',{class:'n'}, numInput(function(){return r[1];}, function(v){r[1]=v;}, {label:r[0]}))], function(m){return m.fin[i];}); });
+  addRow('+ Add financing line', function(){ c.fin.push(['New financing line',0]); });
+  line('Total financing', [], function(m){return m.tf;}, 'total');
+  sect('Capital improvements (monthly)');
+  c.cap.forEach(function(r, i){ line(nameCell(c.cap, i, 0, 'capital line'), [h('td'), h('td',{class:'n'}, numInput(function(){return r[1];}, function(v){r[1]=v;}, {label:r[0]}))], function(m){return m.cap[i];}); });
+  addRow('+ Add capital improvement', function(){ c.cap.push(['New improvement',0]); });
+  line('Total capital improvements', [], function(m){return m.tc;}, 'total');
+  line('Ending cash', [], function(m){return m.end;}, 'hi');
+  var t = h('table',null, h('thead',null, h('tr',null, h('th',{class:'stick-col',text:'Line item'}), h('th',{class:'n',text:'Avg $'}), h('th',{class:'n',text:'Vol / mo'}), MON.map(function(m){return h('th',{class:'n',text:m+' 27'});}), h('th',{class:'n',text:'2027'}))), tb);
+  main.append(h('div',{class:'card'}, h('div',{class:'scroll'}, t), h('p',{class:'note',text:'Expenses show in parentheses. The binder printed $1,313,962 for December ending cash. This page shows $1,313,964 because it doesn’t round each month.'})));
+}
+
+/* Scenarios */
+function scenPicker(label){
+  var act = activeScen();
+  return h('div',{class:'card scen-pick'}, h('div',{class:'scen-label',text:label}),
+    h('div',{class:'chips',role:'group','aria-label':'Scenario used by the cash flow'}, [-1,0,1,2,3].map(function(i){
+      return h('button',{class:'chip',type:'button','aria-pressed':String(i===act),onclick:function(){ S.cash.scenario = i; lastRemoved=null; changed(); },text:scenName(i)}); })),
+    h('p',{class:'note',text: act < 0 ? 'The cash flow uses your current plan volumes. Pick a scenario to run the cash flow on it.' : 'The cash flow is running on ' + scenName(act) + ' volumes. Volume edits on the Cash Flow tab change this scenario.'}));
+}
+function vScen(){
+  var sc = S.scen, c = S.cash, tots = scenTotals(), act = activeScen(), cols = [-1,0,1,2,3];
+  main.append(head('Revenue Scenarios','Same services and prices as the Cash Flow tab, so a change on either tab shows on both. Volumes are per month.'));
+  main.append(h('div',{class:'tiles'}, cols.map(function(a,k){ return h('div',{class:'tile'+(a===act?' active':'')}, h('div',{class:'label',text:scenName(a)}), h('div',{class:'value',text:usd(tots[k])}), h('div',{class:'sub',text: (a===act ? 'Used by cash flow · ' : '') + usd(tots[k]*12) + ' / yr'})); })));
+  main.append(scenPicker('Cash flow uses'));
+  var tb = h('tbody');
+  var groups = [];
+  c.rev.forEach(function(r, i){ var g = groups.filter(function(x){return x.name===r[0];})[0]; if(!g){ g = {name:r[0], idx:[]}; groups.push(g); } g.idx.push(i); });
+  groups.forEach(function(g){
+    tb.appendChild(h('tr',{class:'sect'}, h('td',{class:'stick-col',colspan:'2',text:g.name}), cols.map(function(){return h('td');}), cols.map(function(){return h('td');})));
+    g.idx.forEach(function(i){ var r = c.rev[i]; scenArr(r);
+      tb.appendChild(h('tr',null,
+        h('td',{class:'stick-col'}, h('div',{class:'namecell'}, rm(r[1]||'service', c.rev, i), textInput(function(){return r[1];}, function(v){r[1]=v;}, {label:'Service'}))),
+        h('td',{class:'n'}, numInput(function(){return r[2];}, function(v){r[2]=v;}, {w:'w-s',label:r[1]+' price'})),
+        cols.map(function(a){ return h('td',{class:'n'+(a===act?' act':'')}, numInput(function(){return volOf(r,a);}, function(v){setVol(r,v,a);}, {w:'w-s',label:r[1]+' '+scenName(a)})); }),
+        cols.map(function(a){ return h('td',{class:'n'+(a===act?' act':''),text:usd(num(r[2])*volOf(r,a))}); })));
+    });
+    tb.appendChild(h('tr',{class:'addrow'}, h('td',{class:'stick-col',colspan:'2'}, h('button',{class:'btn small ghost',type:'button',onclick:function(){ lastRemoved=null; c.rev.splice(g.idx[g.idx.length-1]+1,0,[g.name,'New item',0,0,[0,0,0,0]]); changed(); },text:'+ Add to '+g.name})), cols.map(function(){return h('td');}), cols.map(function(){return h('td');})));
+  });
+  tb.appendChild(h('tr',{class:'total'}, h('td',{class:'stick-col',text:'Total per month'}), h('td'),
+    cols.map(function(a){ return h('td',{class:'n',text:plain(c.rev.reduce(function(x,r){return x+volOf(r,a);},0))}); }),
+    tots.map(function(v){ return h('td',{class:'n',text:usd(v)}); })));
+  var thead = h('thead',null,
+    h('tr',null, h('th',{class:'stick-col'}), h('th'), h('th',{colspan:'5',class:'grp',text:'Volume per month'}), h('th',{colspan:'5',class:'grp',text:'Revenue per month'})),
+    h('tr',null, h('th',{class:'stick-col',text:'Service'}), h('th',{class:'n',text:'Price'}),
+      cols.map(function(a){ return a < 0 ? h('th',{class:'n'+(a===act?' act':''),text:'Current plan'}) : h('th',{class:'n'+(a===act?' act':'')}, (function(){ var inp = h('input',{class:'cell n',type:'text',value:sc.names[a],size:String(Math.max(6,sc.names[a].length)),'aria-label':'Scenario name'}); inp.addEventListener('change',function(){ sc.names[a]=inp.value; changed(); }); return inp; })()); }),
+      cols.map(function(a){ return h('th',{class:'n'+(a===act?' act':''),text:scenName(a)}); })));
+  main.append(h('div',{class:'card'}, h('div',{class:'scroll'}, h('table',{class:'scen'}, thead, tb)),
+    h('p',{class:'note',text:'Current plan is the volume column on the Cash Flow tab. Tap a scenario name in the header to rename it.'})));
+}
+
+/* Marketing */
+function vMkt(){
+  var m = S.mkt, alloc = sum(m.rows.map(function(r){return num(r[1]);})), rem = num(m.budget) - alloc;
+  main.append(head('Marketing Budget','Initial launch budget and where it goes.'));
+  main.append(h('div',{class:'tiles'},
+    h('div',{class:'tile'}, h('div',{class:'label',text:'Budget'}), numInput(function(){return m.budget;}, function(v){m.budget=v;}, {label:'Marketing budget'})),
+    h('div',{class:'tile'}, h('div',{class:'label',text:'Allocated'}), h('div',{class:'value',text:usd(alloc)})),
+    h('div',{class:'tile'}, h('div',{class:'label',text:'Remaining'}), h('div',{class:'value',text:usd(rem)}), h('span',{class:'pill '+(rem<0?'bad':rem===0?'good':''),text: rem<0 ? 'Over budget' : rem===0 ? 'Fully allocated' : 'Unallocated'}))));
+  var max = Math.max.apply(null, m.rows.map(function(r){return num(r[1]);}).concat([1]));
+  var tb = h('tbody');
+  m.rows.forEach(function(r, i){
+    var pct = num(m.budget) ? num(r[1])/num(m.budget)*100 : 0;
+    tb.appendChild(h('tr',null,
+      h('td',null, textInput(function(){return r[0];}, function(v){r[0]=v;}, {label:'Item'})),
+      h('td',{class:'n'}, numInput(function(){return r[1];}, function(v){r[1]=v;}, {label:r[0]+' amount'})),
+      h('td',{class:'n',text:pct.toFixed(1)+'%'}),
+      h('td',{style:'min-width:120px'}, h('div',{class:'bar-track'}, h('div',{class:'bar-fill',style:'width:'+(num(r[1])/max*100).toFixed(1)+'%'}))),
+      h('td',null, rm(r[0]||'item', m.rows, i))));
+  });
+  main.append(h('div',{class:'card'}, h('div',{class:'scroll'}, h('table',null, h('thead',null, h('tr',null, h('th',{text:'Item'}), h('th',{class:'n',text:'Amount'}), h('th',{class:'n',text:'% of budget'}), h('th',{text:'Share'}), h('th'))), tb)),
+    h('div',{class:'row',style:'margin-top:10px'}, h('button',{class:'btn',type:'button',onclick:function(){m.rows.push(['New item',0]);changed();},text:'Add item'}))));
+}
+
+/* Classes */
+function parseT(t){ var m = String(t||'').trim().match(/^(\d{1,2})(?::(\d{2}))?\s*([AaPp])?/); if(!m) return null; var hh = +m[1] % 12, mm = +(m[2]||0); var ap = (m[3]||'').toUpperCase(); if(ap === 'P') hh += 12; if(!ap && +m[1] === 12) hh = 12; return hh*60 + mm; }
+function fmtT(mins, noAp){ var hh = Math.floor(mins/60) % 24, mm = mins % 60; return ((hh%12)||12) + ':' + (mm<10?'0':'') + mm + (noAp ? '' : (hh<12 ? ' AM' : ' PM')); }
+function studioClasses(st){
+  var cfg = S.classCfg, every = Math.max(5, num(cfg.dur) + num(cfg.grace)), a = parseT(st.first), b = parseT(st.last), out = [];
+  if(a == null || b == null) return out;
+  for(var t = a, i = 0; t <= b && i < 40; t += every, i++){
+    var key = fmtT(t), sl = st.slots[key] || {};
+    out.push({key:key, start:t, end:t + num(cfg.dur), type: sl.type || st.types[i % st.types.length], ins: sl.ins || ''});
+  }
+  return out;
+}
+function vClasses(){
+  var cfg = S.classCfg, all = S.studios.map(function(st){ return studioClasses(st); });
+  var total = 0, count = 0;
+  S.studios.forEach(function(st, i){ total += num(st.cap) * all[i].length; count += all[i].length; });
+  var every = num(cfg.dur) + num(cfg.grace), close = parseT(cfg.close);
+  main.append(head('Studio Class Schedule','Every class runs '+plain(num(cfg.dur))+' minutes with a '+plain(num(cfg.grace))+'-minute grace period, so each studio starts a class every '+plain(every)+' minutes. Studios are staggered by 15 minutes.'));
+  main.append(h('div',{class:'tiles'},
+    h('div',{class:'tile'}, h('div',{class:'label',text:'Classes per day'}), h('div',{class:'value',text:plain(count)})),
+    h('div',{class:'tile'}, h('div',{class:'label',text:'Spots per day'}), h('div',{class:'value',text:plain(total)})),
+    S.studios.map(function(st, i){ return h('div',{class:'tile'}, h('div',{class:'label',text:st.name}), h('div',{class:'value',text:plain(num(st.cap)*all[i].length)}), h('div',{class:'sub',text:all[i].length+' classes × '+plain(num(st.cap))+' spots'})); })));
+  main.append(h('div',{class:'card row'},
+    h('label',{class:'inline'}, 'Class length (min)', numInput(function(){return cfg.dur;}, function(v){cfg.dur=Math.max(5,v);}, {w:'w-s',label:'Class length in minutes'})),
+    h('label',{class:'inline'}, 'Grace period (min)', numInput(function(){return cfg.grace;}, function(v){cfg.grace=Math.max(0,v);}, {w:'w-s',label:'Grace period in minutes'})),
+    h('label',{class:'inline'}, 'Building closes', textInput(function(){return cfg.close;}, function(v){cfg.close=v;}, {w:'w-m',label:'Closing time'}))));
+  // Day at a glance
+  var lo = 24*60, hi = 0;
+  all.forEach(function(l){ l.forEach(function(c){ lo = Math.min(lo, c.start); hi = Math.max(hi, c.start); }); });
+  var tb = h('tbody');
+  for(var hr = Math.floor(lo/60); hr <= Math.floor(hi/60); hr++){
+    tb.appendChild(h('tr',null, h('td',{class:'time stick-col',text:fmtT(hr*60).replace(':00','')}),
+      all.map(function(l){ var c = l.filter(function(x){ return Math.floor(x.start/60) === hr; })[0];
+        return h('td',null, c ? [h('div',{class:'gl-time',text:fmtT(c.start)}), h('div',{class:'gl-type',text:c.type})] : h('span',{class:'gl-empty',text:'—'})); })));
+  }
+  main.append(h('div',{class:'card'}, h('h3',{text:'Day at a glance'}),
+    h('div',{class:'scroll',style:'max-height:70vh;overflow:auto'}, h('table',{class:'glance'}, h('thead',null, h('tr',null, h('th',{class:'stick-col',text:'Hour'}), S.studios.map(function(st){ return h('th',null, st.name, h('div',{class:'gl-sub',text:st.desc})); }))), tb))));
+  // Studio cards
+  var g = h('div',{class:'depts'});
+  S.studios.forEach(function(st, si){
+    var list = h('div',{class:'class-room'});
+    all[si].forEach(function(c){
+      var sel = h('select',{class:'cell','aria-label':st.name+' '+c.key+' class type'});
+      var opts = st.types.slice(); if(opts.indexOf(c.type) < 0) opts.push(c.type);
+      opts.forEach(function(o){ var op = h('option',{value:o,text:o}); if(o === c.type) op.selected = true; sel.appendChild(op); });
+      sel.addEventListener('change', function(){ st.slots[c.key] = st.slots[c.key] || {}; st.slots[c.key].type = sel.value; changed(); });
+      var ins = h('input',{class:'cell',type:'text',placeholder:'Assign instructor','aria-label':st.name+' '+c.key+' instructor',value:c.ins});
+      ins.addEventListener('change', function(){ st.slots[c.key] = st.slots[c.key] || {}; st.slots[c.key].ins = ins.value; changed(); });
+      var late = close != null && c.end > close;
+      list.appendChild(h('div',{class:'classrow'+(late?' late':'')}, h('div',{class:'ct'}, h('strong',{text:fmtT(c.start)}), h('span',{text:'to '+fmtT(c.end)})), sel, ins));
+    });
+    if(!all[si].length) list.appendChild(h('p',{class:'note',text:'Enter a first and last start time like 6:00 AM.'}));
+    g.appendChild(h('div',{class:'dept'},
+      h('h3',{text:st.name}), h('div',{class:'lead'}, textInput(function(){return st.desc;}, function(v){st.desc=v;}, {w:'',label:st.name+' description'})),
+      h('div',{class:'studio-set'},
+        h('label',null, 'First class', textInput(function(){return st.first;}, function(v){st.first=v;}, {w:'',label:st.name+' first class'})),
+        h('label',null, 'Last class', textInput(function(){return st.last;}, function(v){st.last=v;}, {w:'',label:st.name+' last class'})),
+        h('label',null, 'Spots', numInput(function(){return st.cap;}, function(v){st.cap=Math.max(0,Math.round(v));}, {w:'',label:st.name+' spots per class'}))),
+      h('div',{class:'row',style:'margin:2px 0 8px'}, h('span',{class:'pill',text:all[si].length+' classes · '+plain(num(st.cap)*all[si].length)+' spots / day'})),
+      list,
+      h('p',{class:'note',text:'Class types here: '+st.types.join(', ')+'.'})));
+  });
+  main.append(h('h3',{text:'Studios'}), g);
+}
+
+/* Schedules */
+function vSched(){
+  var names = Object.keys(S.sched), sd = S.sched[schedDept];
+  main.append(head('Department Schedules','Tap a slot to schedule or clear 30 minutes. Tap a column name to rename it. Totals update as you go.'));
+  main.append(h('div',{class:'chips',role:'group','aria-label':'Department'}, names.map(function(n){ return h('button',{class:'chip',type:'button','aria-pressed':String(n===schedDept),onclick:function(){schedDept=n;render();},text:n}); })));
+  var hours = sd.cols.map(function(_,c){ return sd.on.reduce(function(a,row){return a+(row[c]?0.5:0);},0); });
+  var tb = h('tbody');
+  TIMES.forEach(function(t, i){
+    var duty = sd.on[i].filter(Boolean).length;
+    tb.appendChild(h('tr',null, h('td',{class:'time stick-col',text:t}),
+      sd.cols.map(function(col, c){
+        var b = h('button',{class:'slot',type:'button','aria-pressed':String(!!sd.on[i][c]),'aria-label':col+' '+t});
+        b.addEventListener('click', function(){ sd.on[i][c] = !sd.on[i][c]; changed(); });
+        return h('td',null,b);
+      }),
+      h('td',{class:'duty',text: duty ? String(duty) : '–'})));
+  });
+  tb.appendChild(h('tr',{class:'foot'}, h('td',{class:'stick-col',text:'Hours'}), hours.map(function(x){return h('td',{text:String(x)});}), h('td',{text:String(sum(hours))})));
+  var thead = h('thead',null, h('tr',null, h('th',{class:'stick-col',text:'Time'}),
+    sd.cols.map(function(col, c){ var inp = h('input',{type:'text',value:col,'aria-label':'Column name',size:String(Math.max(8,col.length+1))}); inp.addEventListener('change',function(){ sd.cols[c]=inp.value; changed(); }); return h('th',null,inp); }),
+    h('th',{text:'On duty'})));
+  main.append(h('div',{class:'card'}, h('div',{class:'scroll',style:'max-height:75vh;overflow:auto'}, h('table',{class:'sched'}, thead, tb)),
+    h('div',{class:'row',style:'margin-top:10px'},
+      h('button',{class:'btn',type:'button',onclick:function(){ sd.cols.push('New'); sd.on.forEach(function(r){r.push(false);}); changed(); },text:'Add column'}),
+      sd.cols.length > 1 ? h('button',{class:'btn ghost',type:'button',onclick:function(){ sd.cols.pop(); sd.on.forEach(function(r){r.pop();}); changed(); },text:'Remove last column'}) : null,
+      h('button',{class:'btn ghost',type:'button',onclick:function(){ sd.on.forEach(function(r){ for(var k=0;k<r.length;k++) r[k]=false; }); changed(); },text:'Clear all slots'}))));
+}
+
+/* Weekly rotations */
+function vWeekly(){
+  var names = Object.keys(S.weekly), w = S.weekly[weeklyDept], DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  main.append(head('Weekly Rotations','Who covers each shift on each day. Edit any code (T1, KCP3) and the days-per-week count updates.'));
+  main.append(h('div',{class:'chips',role:'group','aria-label':'Department'}, names.map(function(n){ return h('button',{class:'chip',type:'button','aria-pressed':String(n===weeklyDept),onclick:function(){weeklyDept=n;render();},text:n}); })));
+  var tb = h('tbody');
+  w.rows.forEach(function(r, ri){
+    tb.appendChild(h('tr',null, h('td',{class:'stick-col'}, h('div',{class:'namecell'}, rm(r[0]+' shift', w.rows, ri), textInput(function(){return r[0];}, function(v){r[0]=v;}, {w:'w-m',label:'Shift'}))),
+      r[1].map(function(code, d){ return h('td',null, textInput(function(){return r[1][d];}, function(v){r[1][d]=v.trim();}, {w:'w-s',label:r[0]+' '+DAYS[d]})); })));
+  });
+  var counts = {};
+  w.rows.forEach(function(r){ r[1].forEach(function(c){ if(c) counts[c] = (counts[c]||0)+1; }); });
+  var keys = Object.keys(counts).sort(function(a,b){ var ma=a.match(/^([A-Z]+)(\d*)$/i), mb=b.match(/^([A-Z]+)(\d*)$/i); if(ma&&mb&&ma[1]===mb[1]) return (+ma[2]||0)-(+mb[2]||0); return a<b?-1:1; });
+  var grid = h('div',{class:'card'}, h('div',{class:'scroll'}, h('table',null, h('thead',null, h('tr',null, h('th',{class:'stick-col',text:'Shift'}), DAYS.map(function(d){return h('th',{text:d});}))), tb)),
+    h('div',{class:'row',style:'margin-top:10px'}, h('button',{class:'btn',type:'button',onclick:function(){w.rows.push(['Shift',['','','','','','','']]);changed();},text:'Add shift'})),
+    h('p',{class:'note',text:w.note}));
+  var cnt = h('div',{class:'card'}, h('h3',{text:'Days per week'}), h('div',{class:'chips'}, keys.map(function(k){ var n=counts[k]; return h('span',{class:'pill '+(n>=6?'bad':n>=5?'warn':'good'),text:k+': '+n+(n===1?' day':' days')}); })),
+    h('p',{class:'note',text:'Red means 6 or 7 days, which nobody should be scheduled for. Yellow means 5 days.'}));
+  var need = {};
+  keys.forEach(function(k){ var m = k.match(/^([A-Z]+)\d*$/i); var pre = m ? m[1].toUpperCase() : k; need[pre] = (need[pre]||0) + 1; });
+  var dept = weeklyDept === 'Day Care' ? 'Day Care' : weeklyDept;
+  var staffIn = S.staff.filter(function(r){ return r.dept === dept && r.paid; });
+  function have(re){ return staffIn.filter(function(r){ return re.test(r.title); }).reduce(function(a,r){ return a+num(r.n); },0); }
+  var checks = weeklyDept === 'Performance' ? [['Trainers', need.T||0, have(/trainer(?!.*intern)/i)], ['Interns', need.I||0, have(/intern/i)]]
+    : weeklyDept === 'Day Care' ? [['Kid care providers', need.KCP||0, have(/kid|care|provider/i)], ['Director', need.DIR||0, have(/director/i)]] : [];
+  if(checks.length) cnt.appendChild(h('div',{style:'margin-top:12px;display:grid;gap:6px'}, h('h3',{text:'Compared with Payroll'}), checks.map(function(c){ var gap = c[2]-c[1]; return h('div',{class:'row',style:'justify-content:space-between'}, h('span',{text:c[0]+': rotation needs '+c[1]+', Payroll has '+c[2]}), h('span',{class:'pill '+(gap>=0?'good':'bad'),text: gap>=0 ? 'Covered' : 'Short '+(-gap)})); })));
+  main.append(h('div',{class:'grid-2'}, grid, cnt));
+}
+
+/* ---------- GitHub storage (used when the page is hosted on GitHub Pages) ---------- */
+var GH = null, ghLocked = false, ghSha = null, ghUser = '', GHKEY = 'wave-ops-github-token';
+function ghConfig(){
+  var cfg = {}; try{ cfg = JSON.parse(document.getElementById('gh-config').textContent) || {}; }catch(e){ cfg = {}; }
+  var m = location.hostname.match(/^([^.]+)\.github\.io$/i);
+  if((!cfg.owner || !cfg.repo) && m){
+    cfg.owner = cfg.owner || m[1];
+    var seg = location.pathname.split('/').filter(Boolean)[0];
+    cfg.repo = cfg.repo || ((seg && !/\.html?$/i.test(seg)) ? seg : m[1] + '.github.io');
+  }
+  if(!cfg.owner || !cfg.repo) return null;
+  cfg.branch = cfg.branch || 'main'; cfg.path = cfg.path || 'data.json';
+  return cfg;
+}
+function ghToken(){ try{ return localStorage.getItem(GHKEY) || ''; }catch(e){ return ''; } }
+function ghSetToken(t){ try{ if(t) localStorage.setItem(GHKEY, t); else localStorage.removeItem(GHKEY); }catch(e){} }
+function ghApi(path){ return 'https://api.github.com' + path; }
+function ghFileUrl(){ return ghApi('/repos/' + encodeURIComponent(GH.owner) + '/' + encodeURIComponent(GH.repo) + '/contents/' + GH.path.split('/').map(encodeURIComponent).join('/')); }
+function ghHeaders(json){ var hd = {'Accept':'application/vnd.github+json'}; var t = ghToken(); if(t) hd.Authorization = 'Bearer ' + t; if(json) hd['Content-Type'] = 'application/json'; return hd; }
+function b64enc(str){ var bytes = new TextEncoder().encode(str), bin = ''; for(var i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(bin); }
+function b64dec(b){ var bin = atob(String(b).replace(/\s/g,'')), bytes = new Uint8Array(bin.length); for(var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i); return new TextDecoder().decode(bytes); }
+function ghLoad(){
+  return fetch(ghFileUrl() + '?ref=' + encodeURIComponent(GH.branch), {headers:ghHeaders(), cache:'no-store'}).then(function(r){
+    if(r.status === 404) return {missing:true};
+    if(!r.ok) return {error:r.status};
+    return r.json().then(function(j){ return {sha:j.sha, data:JSON.parse(b64dec(j.content))}; });
+  }).catch(function(){ return {error:'network'}; });
+}
+function ghWhoAmI(){
+  if(!ghToken()){ ghUser = ''; return Promise.resolve(); }
+  return fetch(ghApi('/user'), {headers:ghHeaders()}).then(function(r){ return r.ok ? r.json() : null; }).then(function(u){ ghUser = u && u.login || ''; updateSaveState(); }).catch(function(){});
+}
+function ghPull(quiet){
+  return ghLoad().then(function(res){
+    if(res.data){
+      ghSha = res.sha; ghLocked = false;
+      if(!dirty){ S = migrate(res.data); markSaved(); render(); }
+      setBanner(''); updateSaveState();
+    } else if(res.missing){
+      if(!ghToken() && !quiet) setBanner('This binder’s data is private. Connect GitHub to load and save it.', 'Connect GitHub', openGh);
+      else if(ghToken() && !quiet){ ghLocked = false; render(); } if(ghToken() && !quiet) setBanner('No saved data in ' + GH.owner + '/' + GH.repo + ' yet, or your token can’t see it. Saving will create ' + GH.path + '.', null, null);
+    } else if(!quiet){
+      var bad = res.error === 401;
+      setBanner(bad ? 'GitHub rejected your token. Connect again with a new one.' : 'Could not reach GitHub. Showing the last copy this page has.', bad ? 'Connect GitHub' : null, bad ? openGh : null);
+    }
+  });
+}
+function ghPush(){
+  var body = {message:'Update ops binder' + (ghUser ? ' (' + ghUser + ')' : ''), content:b64enc(JSON.stringify(S, null, 1) + '\n'), branch:GH.branch};
+  if(ghSha) body.sha = ghSha;
+  return fetch(ghFileUrl(), {method:'PUT', headers:ghHeaders(true), body:JSON.stringify(body)}).then(function(r){
+    if(r.ok) return r.json().then(function(j){ ghSha = j.content && j.content.sha; return {ok:true}; });
+    return {error:r.status};
+  }).catch(function(){ return {error:'network'}; });
+}
+var banner = null;
+function setBanner(text, label, fn){
+  if(!banner) return;
+  banner.textContent = '';
+  if(!text){ banner.classList.remove('show'); return; }
+  banner.append(h('span',{text:text}), label ? h('button',{class:'btn small',type:'button',onclick:fn,text:label}) : '');
+  banner.classList.add('show');
+}
+function openGh(){
+  var tok = h('input',{type:'password',id:'gh-token',autocomplete:'off',placeholder:'github_pat_…','aria-label':'GitHub token'});
+  var msg = h('p',{class:'note',text:''});
+  function close(){ dlg.remove(); }
+  var dlg = h('div',{class:'modal',role:'dialog','aria-modal':'true','aria-labelledby':'gh-title'},
+    h('div',{class:'modal-card'},
+      h('h3',{id:'gh-title',text: ghToken() ? 'GitHub connection' : 'Connect GitHub to save'}),
+      h('p',{class:'note',text:'Saves go to ' + GH.owner + '/' + GH.repo + ' (' + GH.path + '). Paste a fine-grained personal access token with Contents: Read and write on that repository. It stays in this browser only.'}),
+      ghUser ? h('p',{class:'note',text:'Connected as ' + ghUser + '.'}) : null,
+      h('label',{for:'gh-token',class:'scen-label',text:'Token'}), tok, msg,
+      h('div',{class:'row',style:'justify-content:flex-end;margin-top:8px'},
+        ghToken() ? h('button',{class:'btn ghost',type:'button',onclick:function(){ ghSetToken(''); ghUser = ''; close(); updateSaveState(); },text:'Disconnect'}) : null,
+        h('button',{class:'btn',type:'button',onclick:close,text:'Cancel'}),
+        h('button',{class:'btn primary',type:'button',onclick:function(){
+          var t = tok.value.trim(); if(!t){ msg.textContent = 'Paste a token first.'; return; }
+          msg.textContent = 'Checking…';
+          fetch(ghApi('/user'), {headers:{'Accept':'application/vnd.github+json','Authorization':'Bearer ' + t}}).then(function(r){ return r.ok ? r.json() : null; }).then(function(u){
+            if(!u){ msg.textContent = 'GitHub did not accept that token. Check it and try again.'; return; }
+            ghSetToken(t); ghUser = u.login || ''; close(); updateSaveState(); ghPull(false);
+          }).catch(function(){ msg.textContent = 'Could not reach GitHub. Check your connection.'; });
+        },text:'Connect'}))));
+  dlg.addEventListener('keydown', function(e){ if(e.key === 'Escape') close(); });
+  document.body.appendChild(dlg); tok.focus();
+}
+
+/* ---------- saving ---------- */
+function buildDoc(){
+  var css = document.getElementById('css').textContent, app = document.getElementById('app').textContent;
+  var json = JSON.stringify(S).replace(/</g,'\\u003c');
+  var c = '<' + '/script>';
+  return '<!DOCTYPE html>\n<html lang="en">\n<head>\n' + HEAD + '<style id="css">' + css + '</style>\n</head>\n<body>\n<div id="root"></div>\n<script type="application/json" id="gh-config">' + document.getElementById('gh-config').textContent + c + '\n<script type="application/json" id="state">' + json + c + '\n<script id="app">' + app + c + '\n</body>\n</html>\n';
+}
+function save(){
+  if(GH){
+    if(!ghToken()){ openGh(); return; }
+    var prev = S.savedAt; S.savedAt = new Date().toISOString();
+    saveMsg.textContent = 'Saving to GitHub…';
+    ghPush().then(function(res){
+      if(res.ok){ dirty = false; lastRemoved = null; markSaved(); savebar.classList.remove('show'); updateSaveState(); return; }
+      S.savedAt = prev;
+      if(res.error === 409 || res.error === 422){
+        saveMsg.textContent = 'Someone else saved since you opened this page. ';
+        saveMsg.append(h('button',{class:'btn small',type:'button',onclick:function(){ ghLoad().then(function(r){ if(r.sha){ ghSha = r.sha; save(); } }); },text:'Keep mine'}),
+          h('button',{class:'btn small',type:'button',onclick:function(){ dirty = false; savebar.classList.remove('show'); ghPull(false); },text:'Load theirs'}));
+      } else if(res.error === 401){ saveMsg.textContent = 'GitHub rejected your token. '; saveMsg.append(h('button',{class:'btn small',type:'button',onclick:openGh,text:'Reconnect'})); }
+      else if(res.error === 403 || res.error === 404){ saveMsg.textContent = 'Your token can’t write to ' + GH.owner + '/' + GH.repo + '. It needs Contents: Read and write on that repository.'; }
+      else { saveMsg.textContent = 'Could not save to GitHub. Check your connection and try again.'; }
+    });
+    return;
+  }
+  S.savedAt = new Date().toISOString();
+  if(!artifact){
+ lsSet(S); markSaved(); dirty = false; savebar.classList.remove('show'); updateSaveState(); saveState.textContent += ' · saved on this device only'; return; }
+  saveMsg.textContent = 'Saving…';
+  artifact.publish(buildDoc()).then(function(){ dirty = false; markSaved(); }).catch(function(e){
+    var code = (e && (e.code || e.name || e.message)) || '';
+    if(/not_granted|not_writer/.test(String(code))){ readOnly = true; saveMsg.textContent = 'You can view this page but not save changes to it. Your edits will be undone when you leave.'; }
+    else if(/conflict/.test(String(code))){ saveMsg.textContent = 'Someone else saved first. The page will reload with their version.'; }
+    else { saveMsg.textContent = 'Could not save. Check your connection and try again.'; }
+  });
+}
+function discard(){
+  S = savedSnap ? JSON.parse(savedSnap) : DEFAULTS(); lastRemoved = null; dirty = false; savebar.classList.remove('show'); render();
+}
+
+/* ---------- upgrade older saved data: full titles + Director of Operations ---------- */
+function migrate(st){
+  if(!st || !st.org || (st.v||1) >= 2) return st;
+  var full = {'CEO':'Chief Executive Officer','COO':'Chief Operating Officer','CPO':'Chief Product Officer','Growth':'Head of Growth','CMO':'Chief Marketing Officer','Finance':'Head of Finance','HR':'Head of Human Resources'};
+  st.org.ceoTitle = st.org.ceoTitle || 'Chief Executive Officer';
+  st.org.execs.forEach(function(e){ if(full[e[0]]) e[0] = full[e[0]]; });
+  if(!st.org.execs.some(function(e){ return /operations/i.test(e[0]) && e[0] !== 'Chief Operating Officer'; })){
+    var at = st.org.execs.findIndex(function(e){ return e[0] === 'Chief Operating Officer'; });
+    st.org.execs.splice(at < 0 ? st.org.execs.length : at + 1, 0, ['Director of Operations','Cooper']);
+  }
+  st.org.depts.forEach(function(d){ if(d.lead === 'Director') d.lead = 'Director of ' + d.name.replace(' / ',' & '); });
+  if(st.payroll){
+    st.payroll.rows.forEach(function(r){ if(full[r[0]]) r[0] = full[r[0]]; });
+    if(!st.payroll.rows.some(function(r){ return r[0] === 'Director of Operations'; })){
+      var pi = st.payroll.rows.findIndex(function(r){ return r[0] === 'Chief Operating Officer'; });
+      st.payroll.rows.splice(pi < 0 ? 0 : pi + 1, 0, ['Director of Operations','Cooper',1,0,0,0,0,'Salary not set']);
+    }
+  }
+  if(st.sched && st.sched['Receptionist'] && st.sched['Receptionist'].cols[0] === 'Dir 1st Impr.') st.sched['Receptionist'].cols[0] = 'Director of 1st Impressions';
+  st.v = 2;
+  return st;
+}
+function migrate3(st){
+  if(!st || !st.org || (st.v||1) >= 3) return st;
+  var D = DEFAULTS();
+  st.org.execs = st.org.execs.filter(function(e){ return e[1] !== 'Danny' && e[1] !== 'Jill'; });
+  st.org.execs.forEach(function(e){ if(e[1] === 'Ty') e[0] = 'Chief Growth Officer'; if(e[1] === 'Emily') e[0] = 'Director of Member Experience'; });
+  if(st.payroll){
+    st.payroll.rows = st.payroll.rows.filter(function(r){ return r[1] !== 'Danny' && r[1] !== 'Jill'; });
+    st.payroll.rows.forEach(function(r){ if(r[1] === 'Ty') r[0] = 'Chief Growth Officer'; if(r[1] === 'Emily') r[0] = 'Director of Member Experience'; });
+  }
+  st.classCfg = D.classCfg; st.studios = D.studios; delete st.classes;
+  st.v = 3;
+  return st;
+}
+function migrate4(st){
+  if(!st || !st.org || (st.v||1) >= 4) return st;
+  var D = DEFAULTS(), old = {};
+  (st.cash && st.cash.rev || []).forEach(function(r){ old[r[1]] = r; });
+  D.cash.rev.forEach(function(r){ var o = old[r[1]]; if(o && r[0] !== 'Memberships'){ r[2] = o[2]; r[3] = o[3]; } });
+  st.cash.rev = D.cash.rev; st.cash.memberTarget = D.cash.memberTarget;
+  st.v = 4;
+  return st;
+}
+function migrate5(st){
+  if(!st || !st.org || (st.v||1) >= 5) return st;
+  var rows = (st.scen && st.scen.rows) || [], byName = {};
+  rows.forEach(function(r){ byName[r[0]] = r; });
+  var alias = {'F&B':'Premium Drinks'};
+  var rev = st.cash.rev, mem = rev.filter(function(r){ return r[0] === 'Memberships'; });
+  var memPlan = mem.reduce(function(a,r){ return a + num(r[3]); },0) || 1;
+  var gym = byName['Gym Membership'];
+  rev.forEach(function(r){
+    if(Array.isArray(r[4])) return;
+    if(r[0] === 'Memberships' && gym){ r[4] = gym[2].map(function(v){ return Math.round(num(v) * num(r[3]) / memPlan); }); return; }
+    var src = byName[r[1]] || byName[alias[r[1]]];
+    r[4] = src ? src[2].slice() : [num(r[3]),num(r[3]),num(r[3]),num(r[3])];
+  });
+  // services that were only on the scenario sheet join Med Spa (current plan volume 0)
+  var extra = ['Med Spa Elite Package','Med Spa Revive Package','Med Spa VIP Package','Skin Rejuvenation Plan'];
+  var lastMed = -1; rev.forEach(function(r,i){ if(r[0] === 'Med Spa') lastMed = i; });
+  var at = lastMed < 0 ? rev.length : lastMed + 1;
+  extra.forEach(function(n){ var src = byName[n]; if(!src || rev.some(function(r){ return r[1] === n; })) return; rev.splice(at++, 0, ['Med Spa', n, num(src[1]), 0, src[2].slice()]); });
+  st.scen = {names: (st.scen && st.scen.names) || ['Break-Even',"Bank's #","Whit's #",'Stretch']};
+  st.cash.scenario = -1;
+  delete st.slim;
+  st.v = 5;
+  return st;
+}
+function migrate6(st){
+  if(!st || !st.org || (st.v||1) >= 6) return st;
+  function toks(t){ return String(t||'').toLowerCase().replace(/&|\band\b|,|\/|-/g,' ').split(/\s+/).filter(function(x){ return x && ['of','the','tech','technician','specialist'].indexOf(x) < 0; }); }
+  function sameRole(a, b){ var A = toks(a), B = toks(b); if(!A.length || !B.length) return false; var inB = A.every(function(x){ return B.indexOf(x) >= 0; }), inA = B.every(function(x){ return A.indexOf(x) >= 0; }); return inA || inB; }
+  var o = st.org, pay = (st.payroll && st.payroll.rows || []).map(function(r){ return {title:r[0], person:r[1], n:num(r[2]), sal:num(r[3]), hr:num(r[4]), hrs:num(r[5]), ben:num(r[6]), note:r[7]||'', used:false}; });
+  function fromPay(p, dept, title){ p.used = true; return {dept:dept, title:title || p.title, person:p.person||'', n:p.n, sal:p.sal, hr:p.hr, hrs:p.hrs, ben:p.ben, note:p.note, paid:true}; }
+  var staff = [];
+  // leadership: CEO + execs, matched to payroll by person, then by title
+  var lead = [[o.ceoTitle || 'Chief Executive Officer', o.ceo || '']].concat(o.execs || []);
+  lead.forEach(function(e){
+    var title = String(e[0]).replace(/\s+/g,' ').trim(), person = e[1] || '';
+    var p = pay.filter(function(x){ return !x.used && person && x.person && x.person.toLowerCase() === person.toLowerCase(); })[0] || pay.filter(function(x){ return !x.used && sameRole(x.title, title); })[0];
+    var r = p ? fromPay(p, 'Leadership', title) : {dept:'Leadership', title:title, person:person, n:1, sal:0, hr:0, hrs:0, ben:0, note:'', paid:true};
+    r.person = person || r.person; r.n = 1; staff.push(r);
+  });
+  var rules = [[/receptionist|1st impression/i,'1st Impressions'],[/pilates|yoga/i,'Pilates / Yoga'],[/trainer|intern|performance/i,'Performance'],[/maint/i,'Maintenance'],[/longevity|recovery/i,'Longevity / Recovery'],
+    [/injector|facial|laser|med ?spa/i,'MedSpa'],[/salon|stylist|nail|mass/i,'Salon Services'],[/cafe|barista|cook/i,'Cafe'],[/event/i,'Events'],[/child|kid|day ?care/i,'Day Care']];
+  var depts = (o.depts || []).map(function(d){ return {name:d.name, lead:d.lead || ''}; });
+  (o.depts || []).forEach(function(d){
+    // payroll rows for this department that are not one of its listed roles (e.g. a director)
+    var mine = pay.filter(function(p){ if(p.used) return false; for(var k = 0; k < rules.length; k++){ if(rules[k][0].test(p.title)) return rules[k][1] === d.name; } return false; });
+    var isContractorRow = function(p){ return /contractor/i.test(p.note + ' ' + p.person) && p.n === 0; };
+    mine.filter(function(p){ return /director|coordinator/i.test(p.title); }).forEach(function(p){ staff.push(fromPay(p, d.name)); });
+    (d.staff || []).forEach(function(s){
+      var p = mine.filter(function(x){ return !x.used && !isContractorRow(x) && sameRole(x.title, s[0]); })[0];
+      if(p){ staff.push(fromPay(p, d.name, s[0])); return; }
+      var contractor = d.name === 'Salon Services' && /stylist|nail|mass/i.test(s[0]);
+      staff.push({dept:d.name, title:s[0], person:'', n:num(s[1]), sal:0, hr:0, hrs:0, ben:0, note: contractor ? 'Independent contractor' : 'Add pay rate', paid:!contractor});
+    });
+    mine.forEach(function(p){ if(!p.used && isContractorRow(p)) p.used = true; });
+    mine.forEach(function(p){ if(!p.used) staff.push(fromPay(p, d.name)); });
+  });
+  pay.forEach(function(p){ if(!p.used) staff.push(fromPay(p, '')); });
+  st.staff = staff;
+  st.org = {depts: depts};
+  st.payroll = {tax: st.payroll ? st.payroll.tax : 8, weeks: st.payroll ? st.payroll.weeks : 52};
+  if(st.cash && st.cash.linkPayroll !== true) st.cash.linkPayroll = true;
+  st.inc = st.inc || {dep:0, tax:0};
+  st.v = 6;
+  return st;
+}
+var _m2 = migrate; migrate = function(st){ return migrate6(migrate5(migrate4(migrate3(_m2(st))))); };
+S = migrate(S);
+
+/* ---------- boot ---------- */
+GH = ghConfig(); ghLocked = !!GH;
+var deviceSave = migrate(lsGet());
+if(!GH && deviceSave && deviceSave.org && (!S.savedAt || (deviceSave.savedAt||'') > (S.savedAt||''))){ S = deviceSave; }
+markSaved();
+shell();
+window.addEventListener('hashchange', go);
+go();
+if(GH){
+  ghWhoAmI(); ghPull(false);
+  window.addEventListener('focus', function(){ if(!dirty) ghPull(true); });
+}
+if(!GH) (function connect(tries){
+  try{
+    if(window.claude && typeof window.claude.use === 'function'){
+      window.claude.use('artifact').then(function(a){ if(a){ artifact = a; shared = true; lsSet(null); updateSaveState(); } }).catch(function(){});
+      return;
+    }
+  }catch(e){}
+  if(tries < 20) setTimeout(function(){ connect(tries+1); }, 250);
+})(0);
+})();
+</script>
+</body>
+</html>
