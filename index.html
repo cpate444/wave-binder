@@ -1239,7 +1239,20 @@ function migrate10(st){
   st.v = 10;
   return st;
 }
-var _m2 = migrate; migrate = function(st){ return migrate10(migrate9(migrate8(migrate7(migrate6(migrate5(migrate4(migrate3(_m2(st))))))))); };
+function migrate11(st){
+  if(!st || !st.org || (st.v||1) >= 11) return st;
+  // Revenue Scenarios: keep each scenario's membership total, spread it across plans by the Nov 27 sign-up mix (as migrate7 did for Nov 22)
+  var rows = st.cash.rev.filter(function(r){ return r[0] === 'Memberships' && !/still to sell/i.test(r[1]); });
+  var sold = rows.reduce(function(a,r){ return a + num(r[3]); }, 0);
+  if(sold > 0){
+    var tot = [0,0,0,0];
+    rows.forEach(function(r){ (Array.isArray(r[4]) ? r[4] : [0,0,0,0]).forEach(function(v,k){ tot[k] += num(v); }); });
+    rows.forEach(function(r){ r[4] = tot.map(function(t){ return Math.round(t * num(r[3]) / sold); }); });
+  }
+  st.v = 11;
+  return st;
+}
+var _m2 = migrate; migrate = function(st){ return migrate11(migrate10(migrate9(migrate8(migrate7(migrate6(migrate5(migrate4(migrate3(_m2(st)))))))))); };
 S = migrate(S);
 
 /* ---------- boot ---------- */
